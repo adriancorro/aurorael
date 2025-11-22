@@ -26,29 +26,60 @@ function normalizeText(text = "") {
   return text
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
+    .replace(/[̀-\u036f]/g, "");
 }
 
 function detectLanguage(text = "") {
   const lower = text.toLowerCase();
-  const englishWords = ["who", "what", "how", "when", "why", "time", "date", "today", "weather"];
-  const spanishWords = ["que", "como", "quien", "donde", "cuando", "hora", "fecha", "hoy", "tiempo", "clima", "frio", "calor"];
-  const isEn = englishWords.some(w => lower.includes(w)) && !spanishWords.some(w => lower.includes(w));
+  const englishWords = [
+    "who",
+    "what",
+    "how",
+    "when",
+    "why",
+    "time",
+    "date",
+    "today",
+    "weather",
+  ];
+  const spanishWords = [
+    "que",
+    "como",
+    "quien",
+    "donde",
+    "cuando",
+    "hora",
+    "fecha",
+    "hoy",
+    "tiempo",
+    "clima",
+    "frio",
+    "calor",
+  ];
+  const isEn =
+    englishWords.some((w) => lower.includes(w)) &&
+    !spanishWords.some((w) => lower.includes(w));
   return isEn ? "en" : "es";
 }
 
 // Detección fina: hora vs clima vs fecha
 function isWeatherQuestion(text = "") {
   const lower = text.toLowerCase();
-  return /\b(clima|tiempo|temperatura|frío|frio|calor|¿cuánto (frío|calor)|weather|temperature|cold|hot)\b/.test(lower);
+  return /\b(clima|tiempo|temperatura|frío|frio|calor|¿cuánto (frío|calor)|weather|temperature|cold|hot)\b/.test(
+    lower
+  );
 }
 function isTimeQuestion(text = "") {
   const lower = text.toLowerCase();
-  return /\b(hora|qué hora|que hora|what time|current time|qué hora es|what's the time|whats the time)\b/.test(lower);
+  return /\b(hora|qué hora|que hora|what time|current time|qué hora es|what's the time|whats the time)\b/.test(
+    lower
+  );
 }
 function isDateQuestion(text = "") {
   const lower = text.toLowerCase();
-  return /\b(fecha|qué día|que día|qué fecha|what date|what's the date|today|qué día es hoy|what day)\b/.test(lower);
+  return /\b(fecha|qué día|que día|qué fecha|what date|what's the date|today|qué día es hoy|what day)\b/.test(
+    lower
+  );
 }
 
 function extractLocationFromPrompt(prompt = "") {
@@ -85,7 +116,7 @@ function formatTimeFromTimeZone(timeZone, locale = "es-ES") {
 
 // Fallback: formateo desde offset (segundos) devuelto por OpenWeather
 function formatTimeFromOffset(timezoneOffsetSeconds, locale = "es-ES") {
-  const ms = Date.now() + (timezoneOffsetSeconds * 1000);
+  const ms = Date.now() + timezoneOffsetSeconds * 1000;
   const date = new Date(ms);
   const full = new Intl.DateTimeFormat(locale, {
     dateStyle: "full",
@@ -96,7 +127,7 @@ function formatTimeFromOffset(timezoneOffsetSeconds, locale = "es-ES") {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
-    timeZone: "UTC"
+    timeZone: "UTC",
   }).format(date);
   return { full, short };
 }
@@ -106,7 +137,13 @@ const SESSIONS = new Map(); // sessionId => { history: [], lastLocation, pending
 
 function createSession() {
   const id = crypto.randomUUID();
-  const session = { history: [], lastLocation: null, pendingLocation: false, pendingIntent: null, createdAt: Date.now() };
+  const session = {
+    history: [],
+    lastLocation: null,
+    pendingLocation: false,
+    pendingIntent: null,
+    createdAt: Date.now(),
+  };
   SESSIONS.set(id, session);
   return { id, session };
 }
@@ -114,7 +151,8 @@ function createSession() {
 function getSession(id) {
   if (!id) return null;
   const s = SESSIONS.get(id);
-  if (s && Date.now() - s.createdAt > 1000 * 60 * 60 * 6) { // caduca a 6 horas
+  if (s && Date.now() - s.createdAt > 1000 * 60 * 60 * 6) {
+    // caduca a 6 horas
     SESSIONS.delete(id);
     return null;
   }
@@ -127,12 +165,19 @@ async function fetchWeatherForLocation(location) {
 
   // helper para llamar weather por query
   async function callWeatherByQuery(q) {
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(q)}&units=metric&appid=${OPENWEATHER_KEY}`;
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
+      q
+    )}&units=metric&appid=${OPENWEATHER_KEY}`;
     const r = await fetch(url);
     const text = await r.text();
     let j;
-    try { j = JSON.parse(text); } catch (e) { throw new Error(`Weather API no JSON: ${r.status} ${text}`); }
-    if (!r.ok) throw new Error(`Weather API error: ${r.status} ${j?.message || text}`);
+    try {
+      j = JSON.parse(text);
+    } catch (e) {
+      throw new Error(`Weather API no JSON: ${r.status} ${text}`);
+    }
+    if (!r.ok)
+      throw new Error(`Weather API error: ${r.status} ${j?.message || text}`);
     return j;
   }
 
@@ -145,20 +190,30 @@ async function fetchWeatherForLocation(location) {
       temp: j.main?.temp,
       feels: j.main?.feels_like,
       desc: j.weather?.[0]?.description,
-      raw: j
+      raw: j,
     };
   } catch (err1) {
     // 2) Intento mapear país por nombre (ej. "Madrid, España" -> "Madrid,ES")
     try {
-      const parts = (location || "").split(",").map(s => s.trim());
+      const parts = (location || "").split(",").map((s) => s.trim());
       if (parts.length === 2 && isNaN(Number(parts[1]))) {
         const countryName = parts[1].toLowerCase();
         const countryMap = {
-          "españa": "ES", "spain": "ES",
-          "argentina": "AR", "chile": "CL", "mexico": "MX",
-          "usa": "US", "united states": "US", "eeuu": "US",
-          "uk": "GB", "reino unido": "GB", "gran bretaña": "GB",
-          "francia": "FR", "france": "FR", "alemania":"DE","germany":"DE"
+          españa: "ES",
+          spain: "ES",
+          argentina: "AR",
+          chile: "CL",
+          mexico: "MX",
+          usa: "US",
+          "united states": "US",
+          eeuu: "US",
+          uk: "GB",
+          "reino unido": "GB",
+          "gran bretaña": "GB",
+          francia: "FR",
+          france: "FR",
+          alemania: "DE",
+          germany: "DE",
         };
         const cc = countryMap[countryName];
         if (cc) {
@@ -171,7 +226,7 @@ async function fetchWeatherForLocation(location) {
               temp: j2.main?.temp,
               feels: j2.main?.feels_like,
               desc: j2.weather?.[0]?.description,
-              raw: j2
+              raw: j2,
             };
           } catch (err2) {
             // continue
@@ -184,11 +239,17 @@ async function fetchWeatherForLocation(location) {
 
     // 3) Fallback: usar Geocoding API de OpenWeather para encontrar lat/lon
     try {
-      const geoUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(location)}&limit=1&appid=${OPENWEATHER_KEY}`;
+      const geoUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(
+        location
+      )}&limit=1&appid=${OPENWEATHER_KEY}`;
       const rg = await fetch(geoUrl);
       const txt = await rg.text();
       let gj;
-      try { gj = JSON.parse(txt); } catch (e) { throw new Error(`Geocoding API no JSON: ${rg.status} ${txt}`); }
+      try {
+        gj = JSON.parse(txt);
+      } catch (e) {
+        throw new Error(`Geocoding API no JSON: ${rg.status} ${txt}`);
+      }
       if (!rg.ok || !Array.isArray(gj) || gj.length === 0) {
         throw new Error(`Geocoding failed: ${rg.status} ${gj?.message || txt}`);
       }
@@ -197,18 +258,27 @@ async function fetchWeatherForLocation(location) {
       const wr = await fetch(wUrl);
       const wtxt = await wr.text();
       let wj;
-      try { wj = JSON.parse(wtxt); } catch (e) { throw new Error(`Weather by coords no JSON: ${wr.status} ${wtxt}`); }
-      if (!wr.ok) throw new Error(`Weather by coords error: ${wr.status} ${wj?.message || wtxt}`);
+      try {
+        wj = JSON.parse(wtxt);
+      } catch (e) {
+        throw new Error(`Weather by coords no JSON: ${wr.status} ${wtxt}`);
+      }
+      if (!wr.ok)
+        throw new Error(
+          `Weather by coords error: ${wr.status} ${wj?.message || wtxt}`
+        );
       return {
         name: wj.name || place.name,
         country: wj.sys?.country || place.country,
         temp: wj.main?.temp,
         feels: wj.main?.feels_like,
         desc: wj.weather?.[0]?.description,
-        raw: wj
+        raw: wj,
       };
     } catch (errGeo) {
-      const msg = `No se pudo obtener weather para "${location}". Detalles: ${err1.message || err1}. Geocoding: ${errGeo.message || errGeo}`;
+      const msg = `No se pudo obtener weather para "${location}". Detalles: ${
+        err1.message || err1
+      }. Geocoding: ${errGeo.message || errGeo}`;
       throw new Error(msg);
     }
   }
@@ -240,10 +310,44 @@ export async function POST(req) {
     }
 
     if (!prompt) {
-      return new Response(JSON.stringify({ error: "Falta el prompt", sessionId }), {
-        status: 400,
-        headers: headersBase,
-      });
+      return new Response(
+        JSON.stringify({ error: "Falta el prompt", sessionId }),
+        {
+          status: 400,
+          headers: headersBase,
+        }
+      );
+    }
+
+    // ------------------- BLOQUE: detección de palabras clave (autor) -------------------
+    try {
+      // Cargar palabras clave dinámicamente
+      const { palabrasClave } = await import(
+        `${process.cwd()}/api/keywords.js`
+      );
+
+      // Normalizar todas las palabras clave
+      const normalizedKeywords = (palabrasClave || []).map((f) =>
+        normalizeText(f)
+      );
+      const normalizedPrompt = normalizeText(prompt);
+
+      // Detectar si pregunta por el autor
+      const preguntaAutor = normalizedKeywords.some((frase) =>
+        normalizedPrompt.includes(frase)
+      );
+
+      if (preguntaAutor) {
+        const respuestaAutor =
+          "Esta aplicación fue creada por **Adrian Corro** ([GitHub](https://github.com/adriancorro))";
+        return new Response(JSON.stringify({ result: respuestaAutor }), {
+          status: 200,
+          headers: headersBase,
+        });
+      }
+    } catch (e) {
+      // Si falla la carga de keywords no bloqueamos la app; continuamos normalmente
+      console.warn("No se pudo cargar api/keywords.js:", e);
     }
 
     // Si el cliente envía location explícita (campo location) y estábamos pendiente -> procesar intención pendiente
@@ -261,29 +365,48 @@ export async function POST(req) {
           const locale = detectLanguage(prompt) === "es" ? "es-ES" : "en-US";
           const times = formatTimeFromTimeZone(clientTimeZone, locale);
           if (times) {
-            const final = detectLanguage(prompt) === "es"
-              ? `Hora local (según tu zona): ${times.short}.\nFecha completa: ${times.full}`
-              : `Local time (based on your timezone): ${times.short}.\nFull date: ${times.full}`;
+            const final =
+              detectLanguage(prompt) === "es"
+                ? `Hora local (según tu zona): ${times.short}.\nFecha completa: ${times.full}`
+                : `Local time (based on your timezone): ${times.short}.\nFull date: ${times.full}`;
             session.history.push({ role: "assistant", content: final });
-            return new Response(JSON.stringify({ result: final, sessionId }), { status: 200, headers: headersBase });
+            return new Response(JSON.stringify({ result: final, sessionId }), {
+              status: 200,
+              headers: headersBase,
+            });
           }
         }
         // fallback: usar OpenWeather para la ciudad guardada
         try {
           const weather = await fetchWeatherForLocation(session.lastLocation);
           const tzOffset = weather.raw?.timezone ?? 0;
-          const times = formatTimeFromOffset(tzOffset, detectLanguage(prompt) === "es" ? "es-ES" : "en-US");
-          const final = detectLanguage(prompt) === "es"
-            ? `Hora local en ${weather.name}${weather.country ? ", " + weather.country : ""}: ${times.short}.\nFecha completa: ${times.full}`
-            : `Local time in ${weather.name}${weather.country ? ", " + weather.country : ""}: ${times.short}.\nFull date: ${times.full}`;
+          const times = formatTimeFromOffset(
+            tzOffset,
+            detectLanguage(prompt) === "es" ? "es-ES" : "en-US"
+          );
+          const final =
+            detectLanguage(prompt) === "es"
+              ? `Hora local en ${weather.name}${
+                  weather.country ? ", " + weather.country : ""
+                }: ${times.short}.\nFecha completa: ${times.full}`
+              : `Local time in ${weather.name}${
+                  weather.country ? ", " + weather.country : ""
+                }: ${times.short}.\nFull date: ${times.full}`;
           session.history.push({ role: "assistant", content: final });
-          return new Response(JSON.stringify({ result: final, sessionId }), { status: 200, headers: headersBase });
+          return new Response(JSON.stringify({ result: final, sessionId }), {
+            status: 200,
+            headers: headersBase,
+          });
         } catch (errWeather) {
           console.error("Weather fetch error (pending time):", errWeather);
-          const msg = detectLanguage(prompt) === "es"
-            ? "No pude obtener datos para esa ubicación. Asegúrate de escribir `Ciudad, País` o prueba otra ubicación."
-            : "Could not fetch data for that location. Make sure you provided `City, Country` or try another location.";
-          return new Response(JSON.stringify({ error: msg, sessionId }), { status: 500, headers: headersBase });
+          const msg =
+            detectLanguage(prompt) === "es"
+              ? "No pude obtener datos para esa ubicación. Asegúrate de escribir `Ciudad, País` o prueba otra ubicación."
+              : "Could not fetch data for that location. Make sure you provided `City, Country` or try another location.";
+          return new Response(JSON.stringify({ error: msg, sessionId }), {
+            status: 500,
+            headers: headersBase,
+          });
         }
       }
 
@@ -292,17 +415,29 @@ export async function POST(req) {
           const weather = await fetchWeatherForLocation(session.lastLocation);
           const idioma = detectLanguage(prompt);
           const tempStr = `Temp: ${weather.temp} °C (sensación: ${weather.feels} °C). Condición: ${weather.desc}.`;
-          const finalText = idioma === "es"
-            ? `Objetivamente, en ${weather.name}${weather.country ? ", " + weather.country : ""} ahora mismo ${tempStr}\n\nComentario (filosófico breve): observa cómo la sensación térmica articula la relación entre cuerpo social y entorno material.`
-            : `Objectively, in ${weather.name}${weather.country ? ", " + weather.country : ""} right now ${tempStr}\n\nPhilosophical note: observe how felt temperature articulates the relation between the social body and material environment.`;
+          const finalText =
+            idioma === "es"
+              ? `Objetivamente, en ${weather.name}${
+                  weather.country ? ", " + weather.country : ""
+                } ahora mismo ${tempStr}\n\nComentario (filosófico breve): observa cómo la sensación térmica articula la relación entre cuerpo social y entorno material.`
+              : `Objectively, in ${weather.name}${
+                  weather.country ? ", " + weather.country : ""
+                } right now ${tempStr}\n\nPhilosophical note: observe how felt temperature articulates the relation between the social body and material environment.`;
           session.history.push({ role: "assistant", content: finalText });
-          return new Response(JSON.stringify({ result: finalText, sessionId }), { status: 200, headers: headersBase });
+          return new Response(
+            JSON.stringify({ result: finalText, sessionId }),
+            { status: 200, headers: headersBase }
+          );
         } catch (errWeather) {
           console.error("Weather fetch error (pending weather):", errWeather);
-          const msg = detectLanguage(prompt) === "es"
-            ? "No pude obtener datos para esa ubicación. Asegúrate de escribir `Ciudad, País` o prueba otra ubicación."
-            : "Could not fetch data for that location. Make sure you provided `City, Country` or try another location.";
-          return new Response(JSON.stringify({ error: msg, sessionId }), { status: 500, headers: headersBase });
+          const msg =
+            detectLanguage(prompt) === "es"
+              ? "No pude obtener datos para esa ubicación. Asegúrate de escribir `Ciudad, País` o prueba otra ubicación."
+              : "Could not fetch data for that location. Make sure you provided `City, Country` or try another location.";
+          return new Response(JSON.stringify({ error: msg, sessionId }), {
+            status: 500,
+            headers: headersBase,
+          });
         }
       }
 
@@ -310,18 +445,33 @@ export async function POST(req) {
         try {
           const weather = await fetchWeatherForLocation(session.lastLocation);
           const tzOffset = weather.raw?.timezone ?? 0;
-          const times = formatTimeFromOffset(tzOffset, detectLanguage(prompt) === "es" ? "es-ES" : "en-US");
-          const final = detectLanguage(prompt) === "es"
-            ? `Fecha y hora local en ${weather.name}${weather.country ? ", " + weather.country : ""}: ${times.full}`
-            : `Local date and time in ${weather.name}${weather.country ? ", " + weather.country : ""}: ${times.full}`;
+          const times = formatTimeFromOffset(
+            tzOffset,
+            detectLanguage(prompt) === "es" ? "es-ES" : "en-US"
+          );
+          const final =
+            detectLanguage(prompt) === "es"
+              ? `Fecha y hora local en ${weather.name}${
+                  weather.country ? ", " + weather.country : ""
+                }: ${times.full}`
+              : `Local date and time in ${weather.name}${
+                  weather.country ? ", " + weather.country : ""
+                }: ${times.full}`;
           session.history.push({ role: "assistant", content: final });
-          return new Response(JSON.stringify({ result: final, sessionId }), { status: 200, headers: headersBase });
+          return new Response(JSON.stringify({ result: final, sessionId }), {
+            status: 200,
+            headers: headersBase,
+          });
         } catch (errWeather) {
           console.error("Weather fetch error (pending date):", errWeather);
-          const msg = detectLanguage(prompt) === "es"
-            ? "No pude obtener datos para esa ubicación. Asegúrate de escribir `Ciudad, País` o prueba otra ubicación."
-            : "Could not fetch data for that location. Make sure you provided `City, Country` or try another location.";
-          return new Response(JSON.stringify({ error: msg, sessionId }), { status: 500, headers: headersBase });
+          const msg =
+            detectLanguage(prompt) === "es"
+              ? "No pude obtener datos para esa ubicación. Asegúrate de escribir `Ciudad, País` o prueba otra ubicación."
+              : "Could not fetch data for that location. Make sure you provided `City, Country` or try another location.";
+          return new Response(JSON.stringify({ error: msg, sessionId }), {
+            status: 500,
+            headers: headersBase,
+          });
         }
       }
     }
@@ -334,10 +484,15 @@ export async function POST(req) {
     }
 
     // Manejo separado: TIME vs WEATHER vs DATE para prompts normales
-    if (isTimeQuestion(prompt) || isWeatherQuestion(prompt) || isDateQuestion(prompt)) {
+    if (
+      isTimeQuestion(prompt) ||
+      isWeatherQuestion(prompt) ||
+      isDateQuestion(prompt)
+    ) {
       // Intentamos extraer location (o usar la session.lastLocation / providedLocation)
       const extracted = extractLocationFromPrompt(prompt);
-      const locationToUse = extracted || session.lastLocation || providedLocation || null;
+      const locationToUse =
+        extracted || session.lastLocation || providedLocation || null;
 
       // Si no tenemos ubicación -> pedimos al usuario que la indique y guardamos intención
       if (!locationToUse && !clientTimeZone) {
@@ -346,12 +501,20 @@ export async function POST(req) {
         if (isTimeQuestion(prompt)) session.pendingIntent = "time";
         else if (isWeatherQuestion(prompt)) session.pendingIntent = "weather";
         else if (isDateQuestion(prompt)) session.pendingIntent = "date";
-        session.history.push({ role: "assistant", content: "PENDING_LOCATION" });
+        session.history.push({
+          role: "assistant",
+          content: "PENDING_LOCATION",
+        });
         const idioma = detectLanguage(prompt);
-        const askEs = "¿De qué ciudad/país hablas? Indica ciudad y país (ej. Madrid, España).";
-        const askEn = "Which city/country are you referring to? Please provide city and country (e.g. Madrid, Spain).";
+        const askEs =
+          "¿De qué ciudad/país hablas? Indica ciudad y país (ej. Madrid, España).";
+        const askEn =
+          "Which city/country are you referring to? Please provide city and country (e.g. Madrid, Spain).";
         const message = idioma === "es" ? askEs : askEn;
-        return new Response(JSON.stringify({ result: message, sessionId }), { status: 200, headers: headersBase });
+        return new Response(JSON.stringify({ result: message, sessionId }), {
+          status: 200,
+          headers: headersBase,
+        });
       }
 
       // Si es pregunta de HORA y el cliente envió timeZone -> usar timeZone directamente (no OpenWeather)
@@ -366,14 +529,19 @@ export async function POST(req) {
           session.pendingLocation = false;
           session.pendingIntent = null;
           session.history.push({ role: "assistant", content: final });
-          return new Response(JSON.stringify({ result: final, sessionId }), { status: 200, headers: headersBase });
+          return new Response(JSON.stringify({ result: final, sessionId }), {
+            status: 200,
+            headers: headersBase,
+          });
         }
         // si timeZone no válido, seguiremos al flujo que usa OpenWeather
       }
 
       // Si tenemos location (o no teníamos timeZone legal), consultamos OpenWeather para obtener datos objetivos
       try {
-        const weather = await fetchWeatherForLocation(locationToUse || session.lastLocation);
+        const weather = await fetchWeatherForLocation(
+          locationToUse || session.lastLocation
+        );
 
         // Si la pregunta es de HORA -> usamos timezone (offset) de OpenWeather si no teníamos timeZone
         if (isTimeQuestion(prompt)) {
@@ -381,30 +549,49 @@ export async function POST(req) {
           const locale = detectLanguage(prompt) === "es" ? "es-ES" : "en-US";
           const times = formatTimeFromOffset(tzOffset, locale);
           const idioma = detectLanguage(prompt);
-          const answerEs = `Hora local en ${weather.name}${weather.country ? ", " + weather.country : ""}: ${times.short}.\nFecha completa: ${times.full}`;
-          const answerEn = `Local time in ${weather.name}${weather.country ? ", " + weather.country : ""}: ${times.short}.\nFull date: ${times.full}`;
+          const answerEs = `Hora local en ${weather.name}${
+            weather.country ? ", " + weather.country : ""
+          }: ${times.short}.\nFecha completa: ${times.full}`;
+          const answerEn = `Local time in ${weather.name}${
+            weather.country ? ", " + weather.country : ""
+          }: ${times.short}.\nFull date: ${times.full}`;
           const final = idioma === "es" ? answerEs : answerEn;
           session.lastLocation = locationToUse || session.lastLocation;
           session.pendingLocation = false;
           session.pendingIntent = null;
           session.history.push({ role: "assistant", content: final });
-          return new Response(JSON.stringify({ result: final, sessionId }), { status: 200, headers: headersBase });
+          return new Response(JSON.stringify({ result: final, sessionId }), {
+            status: 200,
+            headers: headersBase,
+          });
         }
 
         // Si la pregunta es de CLIMA -> comportamiento anterior (temp + comentario)
         if (isWeatherQuestion(prompt)) {
           const idioma = detectLanguage(prompt);
           const tempStr = `Temp: ${weather.temp} °C (sensación: ${weather.feels} °C). Condición: ${weather.desc}.`;
-          const styleEs = `Objetivamente, en ${weather.name}${weather.country ? ", " + weather.country : ""} ahora mismo ${tempStr}`;
-          const styleEn = `Objectively, in ${weather.name}${weather.country ? ", " + weather.country : ""} right now ${tempStr}`;
-          const philosophicalEs = "Comentario (filosófico breve): observa cómo la sensación térmica articula la relación entre cuerpo social y entorno material.";
-          const philosophicalEn = "Philosophical note: observe how felt temperature articulates the relation between the social body and material environment.";
-          const finalText = (idioma === "es" ? `${styleEs}\n\n${philosophicalEs}` : `${styleEn}\n\n${philosophicalEn}`);
+          const styleEs = `Objetivamente, en ${weather.name}${
+            weather.country ? ", " + weather.country : ""
+          } ahora mismo ${tempStr}`;
+          const styleEn = `Objectively, in ${weather.name}${
+            weather.country ? ", " + weather.country : ""
+          } right now ${tempStr}`;
+          const philosophicalEs =
+            "Comentario (filosófico breve): observa cómo la sensación térmica articula la relación entre cuerpo social y entorno material.";
+          const philosophicalEn =
+            "Philosophical note: observe how felt temperature articulates the relation between the social body and material environment.";
+          const finalText =
+            idioma === "es"
+              ? `${styleEs}\n\n${philosophicalEs}`
+              : `${styleEn}\n\n${philosophicalEn}`;
           session.lastLocation = locationToUse || session.lastLocation;
           session.pendingLocation = false;
           session.pendingIntent = null;
           session.history.push({ role: "assistant", content: finalText });
-          return new Response(JSON.stringify({ result: finalText, sessionId }), { status: 200, headers: headersBase });
+          return new Response(
+            JSON.stringify({ result: finalText, sessionId }),
+            { status: 200, headers: headersBase }
+          );
         }
 
         // Si la pregunta es de FECHA -> usamos offset de OpenWeather (si no se envió timeZone)
@@ -412,7 +599,10 @@ export async function POST(req) {
           const idioma = detectLanguage(prompt);
           // preferimos clientTimeZone si existe
           if (clientTimeZone) {
-            const times = formatTimeFromTimeZone(clientTimeZone, idioma === "es" ? "es-ES" : "en-US");
+            const times = formatTimeFromTimeZone(
+              clientTimeZone,
+              idioma === "es" ? "es-ES" : "en-US"
+            );
             if (times) {
               const ansEs = `Fecha y hora local (según tu zona): ${times.full}`;
               const ansEn = `Local date and time (based on your timezone): ${times.full}`;
@@ -421,35 +611,53 @@ export async function POST(req) {
               session.pendingLocation = false;
               session.pendingIntent = null;
               session.history.push({ role: "assistant", content: final });
-              return new Response(JSON.stringify({ result: final, sessionId }), { status: 200, headers: headersBase });
+              return new Response(
+                JSON.stringify({ result: final, sessionId }),
+                { status: 200, headers: headersBase }
+              );
             }
           }
           // fallback a offset
           const tz = weather.raw?.timezone ?? 0;
-          const times = formatTimeFromOffset(tz, detectLanguage(prompt) === "es" ? "es-ES" : "en-US");
-          const answerEs = `Fecha y hora local en ${weather.name}${weather.country ? ", " + weather.country : ""}: ${times.full}`;
-          const answerEn = `Local date and time in ${weather.name}${weather.country ? ", " + weather.country : ""}: ${times.full}`;
+          const times = formatTimeFromOffset(
+            tz,
+            detectLanguage(prompt) === "es" ? "es-ES" : "en-US"
+          );
+          const answerEs = `Fecha y hora local en ${weather.name}${
+            weather.country ? ", " + weather.country : ""
+          }: ${times.full}`;
+          const answerEn = `Local date and time in ${weather.name}${
+            weather.country ? ", " + weather.country : ""
+          }: ${times.full}`;
           const final = detectLanguage(prompt) === "es" ? answerEs : answerEn;
           session.lastLocation = locationToUse || session.lastLocation;
           session.pendingLocation = false;
           session.pendingIntent = null;
           session.history.push({ role: "assistant", content: final });
-          return new Response(JSON.stringify({ result: final, sessionId }), { status: 200, headers: headersBase });
+          return new Response(JSON.stringify({ result: final, sessionId }), {
+            status: 200,
+            headers: headersBase,
+          });
         }
-
       } catch (errWeather) {
         console.error("Weather fetch error:", errWeather);
         const idioma = detectLanguage(prompt);
-        const msg = idioma === "es"
-          ? "No pude obtener datos para esa ubicación. Asegúrate de escribir `Ciudad, País` o prueba otra ubicación."
-          : "Could not fetch data for that location. Make sure you provided `City, Country` or try another location.";
-        return new Response(JSON.stringify({ error: msg, sessionId }), { status: 500, headers: headersBase });
+        const msg =
+          idioma === "es"
+            ? "No pude obtener datos para esa ubicación. Asegúrate de escribir `Ciudad, País` o prueba otra ubicación."
+            : "Could not fetch data for that location. Make sure you provided `City, Country` or try another location.";
+        return new Response(JSON.stringify({ error: msg, sessionId }), {
+          status: 500,
+          headers: headersBase,
+        });
       }
     }
 
     // ------------------- Caso general: pasar a OpenAI con contexto de sesión -------------------
     const MAX_HISTORY = 8;
-    const historyForModel = session.history.slice(-MAX_HISTORY).map(h => ({ role: h.role, content: h.content }));
+    const historyForModel = session.history
+      .slice(-MAX_HISTORY)
+      .map((h) => ({ role: h.role, content: h.content }));
 
     // Añadir prompt actual
     historyForModel.push({ role: "user", content: prompt });
@@ -460,14 +668,18 @@ export async function POST(req) {
 
     // System message mejorado
     const idioma = detectLanguage(prompt);
-    const systemMessage = idioma === "es"
-      ? "Eres Aurorael: un filósofo teórico crítico que combina la perspectiva de la Escuela de Frankfurt con matices del pensamiento de Žižek y Lacan. Responde en español con profundidad, elegancia y coherencia con el contexto conversacional. No afirmarás tener acceso en tiempo real a internet ni que puedes buscar en Google."
-      : "You are Aurorael: a critical-theory philosopher combining Frankfurt School sensibilities with flavors of Žižek and Lacan. Respond in English with depth and coherence. Do not claim to browse the web or access real-time internet.";
+    const systemMessage =
+      idioma === "es"
+        ? "Eres Aurorael: un filósofo teórico crítico que combina la perspectiva de la Escuela de Frankfurt con matices del pensamiento de Žižek y Lacan. Responde en español con profundidad, elegancia y coherencia con el contexto conversacional. No afirmarás tener acceso en tiempo real a internet ni que puedes buscar en Google."
+        : "You are Aurorael: a critical-theory philosopher combining Frankfurt School sensibilities with flavors of Žižek and Lacan. Respond in English with depth and coherence. Do not claim to browse the web or access real-time internet.";
 
     // Añadir ubicación conocida como contexto si existe
     const contextMessages = [{ role: "system", content: systemMessage }];
     if (session.lastLocation) {
-      contextMessages.push({ role: "system", content: `User's known location: ${session.lastLocation}` });
+      contextMessages.push({
+        role: "system",
+        content: `User's known location: ${session.lastLocation}`,
+      });
     }
 
     const messagesToSend = contextMessages.concat(historyForModel);
@@ -479,30 +691,39 @@ export async function POST(req) {
       max_tokens: 800,
     });
 
-    const respuesta = completion.choices?.[0]?.message?.content || "Sin respuesta generada.";
+    const respuesta =
+      completion.choices?.[0]?.message?.content || "Sin respuesta generada.";
     session.history.push({ role: "assistant", content: respuesta });
 
     return new Response(JSON.stringify({ result: respuesta, sessionId }), {
       status: 200,
       headers: headersBase,
     });
-
   } catch (error) {
     console.error("Error interno en /api/route:", error);
     const origin = req.headers.get("origin") || "";
-    return new Response(JSON.stringify({
-      error: "Error interno del servidor",
-      detalle: error?.message || String(error),
-    }), { status: 500, headers: corsHeaders(origin) });
+    return new Response(
+      JSON.stringify({
+        error: "Error interno del servidor",
+        detalle: error?.message || String(error),
+      }),
+      { status: 500, headers: corsHeaders(origin) }
+    );
   }
 }
 
 // GET (prueba)
 export async function GET() {
-  return new Response(JSON.stringify({ status: "API funcionando. Usa POST para prompts." }), {
-    status: 200,
-    headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-  });
+  return new Response(
+    JSON.stringify({ status: "API funcionando. Usa POST para prompts." }),
+    {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    }
+  );
 }
 
 // OPTIONS (CORS preflight)

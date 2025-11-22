@@ -4,12 +4,24 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Hegel 2052</title>
+  <title>AURORAEL — Hegel 2052</title>
   <link rel="icon" type="image/png" sizes="512x512" href="img/hegel.png" />
-  <style>
-    /* (incluye todo tu CSS tal cual) */
-    @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&family=Exo+2:wght@400;600&display=swap");
+  <meta name="description" content="Aurorael — AI futurista. Pregúntale cosas y experimenta la interfaz cyberpunk." />
 
+  <style>
+    /* ------------------ TIPOGRAFÍA ------------------ */
+    @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&family=Exo+2:wght@300;400;600;700&display=swap");
+
+    :root {
+      --bg-dark: #03020a;
+      --neon-cyan: #00f0ff;
+      --neon-magenta: #b24bff;
+      --accent: #7ee7ff;
+      --glass: rgba(255, 255, 255, 0.04);
+      --glass-2: rgba(0, 255, 255, 0.06);
+    }
+
+    /* ------------------ RESET ------------------ */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -18,311 +30,556 @@
 
     html,
     body {
-      height: 100%;
-      font-family: "Exo 2", sans-serif;
-      color: #ccfaff;
-      background: #000;
-      overflow-x: hidden
+      height: 100%
     }
 
     body {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative
+      font-family: "Exo 2", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: radial-gradient(1200px 600px at 10% 20%, rgba(18, 10, 40, 0.75), transparent 10%),
+        radial-gradient(900px 500px at 90% 80%, rgba(40, 0, 40, 0.6), transparent 10%),
+        var(--bg-dark);
+      color: #dffaff;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
     }
 
-    .bg-layer {
-      position: fixed;
-      top: 0;
-      left: 0;
+    /* ------------------ LAYOUT ------------------ */
+    .stage {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 40px;
+      align-items: center;
+      padding: 48px;
+      padding-top: 64px;
+      padding-bottom: 100px;
+      position: relative;
+    }
+
+    /* background hero image (left) */
+    .hero {
+      position: relative;
       width: 100%;
-      height: 100%;
-      z-index: 0;
-      overflow: hidden
+      max-width: 420px;
+      height: 640px;
+      margin: auto;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(0, 255, 255, 0.06) inset;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      background: linear-gradient(180deg, rgba(14, 6, 30, 0.6), rgba(0, 0, 0, 0.6));
+      backdrop-filter: blur(6px);
     }
 
-    canvas {
+    /* use the uploaded image as glowing portrait */
+    .hero .portrait {
       position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      pointer-events: none
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
       inset: 0;
-      background: radial-gradient(circle at 50% 50%, #021025 0%, #000010 100%);
-      background-size: 200% 200%;
-      animation: bgShift 10s ease-in-out infinite alternate;
-      z-index: 0
+      background-image: url('/mnt/data/aded8b4a-fbe7-4f3b-980d-6606cc65b7b9.png');
+      background-size: cover;
+      background-position: center;
+      transform-origin: center;
+      filter: contrast(1.05) saturate(1.05) drop-shadow(0 16px 40px rgba(0, 0, 255, 0.12));
+      animation: portraitFloat 6s ease-in-out infinite;
     }
 
-    @keyframes bgShift {
+    @keyframes portraitFloat {
       0% {
-        background-position: 0% 50%
+        transform: translateY(0px) scale(1);
+      }
+
+      50% {
+        transform: translateY(-8px) scale(1.01);
       }
 
       100% {
-        background-position: 100% 50%
+        transform: translateY(0px) scale(1);
       }
     }
 
-    main {
-      flex: 1;
+    /* neon arc behind portrait */
+    .hero::before {
+      content: "";
+      position: absolute;
+      left: -10%;
+      top: -5%;
+      width: 140%;
+      height: 140%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 50% 40%, rgba(0, 240, 255, 0.08), rgba(178, 75, 255, 0.06) 20%, transparent 35%);
+      mix-blend-mode: screen;
+      filter: blur(28px) saturate(1.2);
+      transform: scale(1.02);
+      pointer-events: none;
+      animation: arcPulse 10s linear infinite;
+    }
+
+    @keyframes arcPulse {
+      0% {
+        opacity: 0.9
+      }
+
+      50% {
+        opacity: 0.6
+      }
+
+      100% {
+        opacity: 0.9
+      }
+    }
+
+    /* subtle scanlines */
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.06) 50%, rgba(0, 0, 0, 0));
+      mix-blend-mode: multiply;
+      opacity: 0.25;
+      pointer-events: none;
+    }
+
+    /* left card info */
+    .card-left {
+      position: relative;
       z-index: 5;
       display: flex;
       flex-direction: column;
+      gap: 18px;
+      padding: 20px;
+      background: linear-gradient(180deg, rgba(3, 6, 20, 0.45), rgba(3, 6, 20, 0.25));
+      border-radius: 14px;
+      border: 1px solid rgba(0, 255, 255, 0.06);
+      margin-top: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 12px rgba(0, 255, 255, 0.03) inset;
+    }
+
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .logo {
+      width: 62px;
+      height: 62px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.12), rgba(178, 75, 255, 0.12));
+      display: flex;
       align-items: center;
       justify-content: center;
-      text-align: center;
-      padding: 60px 20px
+      box-shadow: 0 6px 20px rgba(0, 240, 255, 0.06), 0 0 18px rgba(178, 75, 255, 0.03) inset;
+      border: 1px solid rgba(255, 255, 255, 0.04);
     }
 
-    .hegel-face {
-      width: 260px;
-      height: 260px;
-      margin-bottom: 25px;
-      filter: drop-shadow(0 0 25px #00ffff);
-      animation: facePulse 6s ease-in-out infinite alternate
+    .logo svg {
+      width: 42px;
+      height: 42px;
+      filter: drop-shadow(0 6px 18px rgba(0, 255, 255, 0.06));
     }
 
-    @keyframes facePulse {
-      from {
-        filter: drop-shadow(0 0 20px #00ffff)
-      }
-
-      to {
-        filter: drop-shadow(0 0 40px #8b5cff)
-      }
-    }
-
-    h1 {
+    .title {
       font-family: "Orbitron", sans-serif;
-      font-size: 3em;
-      text-transform: uppercase;
+      font-size: 28px;
       letter-spacing: 6px;
-      background: linear-gradient(90deg, #00ffff, #8b5cff);
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 25px #00ffff, 0 0 45px #8b5cff;
-      margin-bottom: 10px
+      text-shadow: 0 0 18px rgba(0, 240, 255, 0.18), 0 0 28px rgba(178, 75, 255, 0.12);
     }
 
-    p {
-      font-size: 1.1em;
-      color: #aeeaff;
-      text-shadow: 0 0 10px #00ffff;
-      margin-bottom: 30px
+    .subtitle {
+      color: rgba(190, 255, 255, 0.85);
+      font-size: 13px;
+      opacity: 0.95;
     }
 
-    textarea {
-      width: 90%;
-      max-width: 550px;
-      height: 130px;
-      background: rgba(0, 255, 255, 0.05);
-      border: 1px solid #00ffff;
-      color: #aafaff;
-      font-size: 16px;
-      border-radius: 12px;
-      padding: 12px;
-      resize: none;
-      outline: none;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 0 15px #0077ff33
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
     }
 
-    button {
-      margin-top: 25px;
-      background: linear-gradient(90deg, #00ffff, #8b5cff);
-      color: #000;
-      border: none;
-      font-weight: bold;
-      font-size: 17px;
-      padding: 14px 40px;
-      border-radius: 50px;
-      cursor: pointer;
-      box-shadow: 0 0 25px #00ffff;
-      transition: all .3s ease-in-out
+    .chip {
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      background: linear-gradient(90deg, rgba(0, 255, 255, 0.04), rgba(178, 75, 255, 0.03));
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--accent);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
     }
 
-    button:hover {
-      transform: scale(1.08);
-      box-shadow: 0 0 40px #9b59ff
-    }
-
-    #respuesta {
-      margin-top: 35px;
-      width: 90%;
-      max-width: 650px;
-      background: rgba(0, 15, 25, .55);
-      border-radius: 14px;
-      padding: 25px;
-      border: 1px solid #00ffff80;
-      white-space: pre-wrap;
-      overflow-wrap: break-word;
-      word-break: break-word;
-      font-size: 1.1em;
-      text-shadow: 0 0 12px #00ffff99;
-      min-height: 120px;
-      line-height: 1.6;
-      box-shadow: 0 0 25px #00336688 inset;
-      color: #d8ffff
-    }
-
-    /* nuevo: contenedor del video */
-    #videoContainer {
-      margin-top: 20px;
-      width: 90%;
-      max-width: 650px;
+    /* ------------------ RIGHT: main interactive area ------------------ */
+    .panel {
+      position: relative;
+      z-index: 6;
+      padding: 36px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(6, 8, 20, 0.55), rgba(2, 4, 10, 0.45));
+      border: 1px solid rgba(0, 255, 255, 0.06);
+      box-shadow: 0 40px 120px rgba(0, 0, 0, 0.6), 0 8px 40px rgba(0, 0, 0, 0.5) inset;
+      backdrop-filter: blur(6px);
+      min-height: 600px;
       display: flex;
       flex-direction: column;
+      gap: 18px;
+    }
+
+    .panel-head {
+      display: flex;
       align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .panel-head .name {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .panel-head h2 {
+      font-family: "Orbitron", sans-serif;
+      font-size: 34px;
+      letter-spacing: 6px;
+      margin: 0;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 20px rgba(0, 240, 255, 0.14);
+    }
+
+    .panel-head .desc {
+      color: #bfefff;
+      opacity: 0.9;
+      font-size: 13px
+    }
+
+    /* input area */
+    .composer {
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    textarea#prompt {
+      width: 100%;
+      min-height: 160px;
+      resize: vertical;
+      padding: 16px;
+      font-size: 16px;
+      color: #defcff;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.18));
+      border-radius: 12px;
+      border: 1px solid rgba(0, 255, 255, 0.06);
+      outline: none;
+      box-shadow: 0 6px 30px rgba(0, 0, 0, 0.5) inset;
+      caret-color: var(--neon-cyan);
+      transition: box-shadow .18s ease;
+    }
+
+    textarea#prompt:focus {
+      box-shadow: 0 8px 40px rgba(0, 240, 255, 0.06), 0 0 28px rgba(178, 75, 255, 0.03);
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    button#sendBtn {
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+      color: #04121a;
+      border: none;
+      font-weight: 700;
+      padding: 12px 22px;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(0, 240, 255, 0.12);
+      transition: transform .18s ease, box-shadow .18s ease;
+      font-size: 15px;
+    }
+
+    button#sendBtn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 18px 46px rgba(178, 75, 255, 0.18)
+    }
+
+    /* response area */
+    #respuesta {
+      margin-top: 8px;
+      width: 100%;
+      min-height: 160px;
+      padding: 18px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(0, 15, 25, 0.45), rgba(0, 10, 20, 0.25));
+      border: 1px solid rgba(0, 255, 255, 0.05);
+      color: #d8ffff;
+      font-size: 15px;
+      line-height: 1.6;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6) inset;
+      white-space: pre-wrap;
+    }
+
+    /* video container inside panel */
+    #videoContainer {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
       gap: 10px;
+      align-items: center;
     }
 
     .video-wrap {
-      position: relative;
       width: 100%;
-      padding-bottom: 56.25%;
-      height: 0;
-      overflow: hidden;
+      max-width: 720px;
       border-radius: 12px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
-      border: 1px solid rgba(0, 255, 255, 0.12)
-    }
-
-    .video-wrap iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: 0;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.6);
     }
 
     .video-controls {
       display: flex;
       gap: 10px;
       align-items: center;
+      justify-content: center;
+      margin-bottom: 6px;
     }
 
-    footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      z-index: 9999;
-      text-align: center;
-      padding: 20px 0;
-      background: rgba(0, 10, 25, 0.9);
-      border-top: 1px solid rgba(0, 255, 255, 0.3);
-      box-shadow: 0 -4px 25px rgba(0, 255, 255, 0.1);
-      font-size: 0.8em;
-      color: #c8ffff;
-      text-shadow: 0 0 8px #00ffff
+    .video-controls button {
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: none;
+      background: rgba(255, 255, 255, 0.06);
+      color: #bfefff;
+      cursor: pointer;
     }
 
-    footer a {
-      color: #00ffff;
+    /* small footer inside panel */
+    .panel-foot {
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      color: rgba(200, 255, 255, 0.75);
+      font-size: 13px;
+      opacity: 0.95;
+    }
+
+    .panel-foot a {
+      color: var(--neon-cyan);
       text-decoration: none;
-      font-weight: bold;
-      text-shadow: 0 0 10px #00ffff;
-      transition: .3s
+      font-weight: 600;
     }
 
-    footer a:hover {
-      color: #9b59ff;
-      text-shadow: 0 0 15px #9b59ff
+    /* decorative animated scanline across panel */
+    .scanline {
+      position: absolute;
+      left: -30%;
+      top: 0;
+      width: 160%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.12), transparent);
+      transform: translateY(-6px) rotate(-2deg);
+      animation: slide 6s linear infinite;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    @keyframes slide {
+      0% {
+        transform: translateY(-20%) rotate(-2deg)
+      }
+
+      50% {
+        transform: translateY(60%) rotate(-2deg)
+      }
+
+      100% {
+        transform: translateY(160%) rotate(-2deg)
+      }
+    }
+
+    /* responsive */
+    @media(max-width:1120px) {
+      .stage {
+        grid-template-columns: 1fr;
+        gap: 22px;
+        padding: 28px;
+      }
+
+      .hero {
+        max-width: 720px;
+        height: 420px;
+        margin: 0 auto;
+      }
+
+      .panel {
+        min-height: 520px;
+        padding: 20px;
+      }
     }
 
     @media(max-width:600px) {
-      h1 {
-        font-size: 2em
+      .hero {
+        display: none;
       }
 
-      .hegel-face {
-        width: 160px;
-        height: 160px
+      .panel {
+        padding: 16px;
+        border-radius: 14px;
+      }
+
+      h2 {
+        font-size: 26px
       }
     }
   </style>
 </head>
 
 <body>
-  <div class="bg-layer">
-    <canvas id="bg"></canvas>
-    <canvas id="meteor"></canvas>
+  <div class="stage">
+    <!-- LEFT HERO + INFO -->
+    <div>
+      <div class="hero" role="img" aria-label="Aurorael portrait">
+        <div class="portrait" aria-hidden="true"></div>
+        <!-- floating left card overlay -->
+        <div style="position:absolute; left:18px; bottom:18px; width:86%;">
+          <div class="card-left" role="region" aria-label="Aurorael info">
+            <div class="brand">
+              <div class="logo" aria-hidden="true">
+                <!-- small neon emblem -->
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="2" y="2" width="20" height="20" rx="4" stroke="url(#g)" stroke-width="1.6"
+                    fill="rgba(0,0,0,0.18)" />
+                  <defs>
+                    <linearGradient id="g" x1="0" x2="1">
+                      <stop offset="0" stop-color="#00f0ff" />
+                      <stop offset="1" stop-color="#b24bff" />
+                    </linearGradient>
+                  </defs>
+                  <path d="M6 17L10 7L14 17" stroke="#7ee7ff" stroke-width="1.6" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+              </div>
+              <div>
+                <div class="title">A U R O R A E L</div>
+                <div class="subtitle">AI futurista • Interfaz Neón • Filosofía Sintética</div>
+              </div>
+            </div>
+
+            <div class="meta" aria-hidden="true">
+              <div class="chip">Neon Core • v1.2</div>
+              <div class="chip">Cyber-Lacan</div>
+              <div class="chip">Realtime • Stateless</div>
+            </div>
+
+            <div style="color:#bfefff; margin-top:6px; font-size:13px; line-height:1.4;">
+              Aurorael es una inteligencia artificial teórica crítica con estética cyberpunk. Pregúntale sobre clima,
+              tiempo o filosofía.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL: interactivo -->
+    <section class="panel" aria-labelledby="panel-title">
+      <div class="scanline" aria-hidden="true"></div>
+
+      <div class="panel-head">
+        <div class="name">
+          <h2 id="panel-title">AURORAEL</h2>
+          <div class="desc">Pregúntame algo y explora la interfaz — escribe tu consulta abajo.</div>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div
+            style="font-size:12px;color:#aef6ff;border-radius:8px;padding:6px 10px;background:rgba(255,255,255,0.02);border:1px solid rgba(0,255,255,0.04);">
+            Online</div>
+        </div>
+      </div>
+
+      <div class="composer" role="form" aria-label="Composer">
+        <textarea id="prompt" placeholder="Ej.: ¿Quién te creó? o ¿Cuánto frío hace en Barcelona?"
+          aria-label="Pregunta"></textarea>
+
+        <div class="controls">
+          <button id="sendBtn" aria-label="Consultar">CONSULTAR</button>
+        </div>
+
+        <div id="respuesta" role="status" aria-live="polite"></div>
+
+        <!-- video container -->
+        <div id="videoContainer" aria-live="polite" aria-atomic="true"></div>
+
+        <div class="panel-foot">
+          <div>Created by <a href="https://github.com/adriancorro" target="_blank" rel="noopener">Adrian</a></div>
+          <div style="opacity:0.9">Powered by <strong>OpenAI</strong></div>
+        </div>
+      </div>
+    </section>
   </div>
 
-  <main>
-    <svg class="hegel-face" viewBox="0 0 100 100" aria-hidden="true">
-      <defs>
-        <linearGradient id="neonGradient" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#00ffff" />
-          <stop offset="100%" stop-color="#8b5cff" />
-        </linearGradient>
-      </defs>
-      <path d="M25 25 L75 25 Q90 40 80 75 Q70 95 50 95 Q30 95 20 75 Q10 40 25 25 Z" stroke="url(#neonGradient)"
-        fill="none" />
-      <path d="M32 38 L45 36 M55 36 L68 38" stroke="#00eaff" />
-      <circle cx="38" cy="45" r="2" fill="#00ffff" />
-      <circle cx="62" cy="45" r="2" fill="#00ffff" />
-      <path d="M35 67 Q50 76 65 67" stroke="#00ffff" fill="none" stroke-width="0.8" />
-    </svg>
-
-    <h1>HEGEL 2052</h1>
-    <p>Reflexión dialéctica del espíritu moderno</p>
-
-    <textarea id="prompt" placeholder="Escribe tu pregunta (p.ej. ¿Cuánto frío hace?)" aria-label="Pregunta"></textarea>
-    <button id="sendBtn" aria-label="Consultar">Consultar</button>
-    <div id="respuesta" role="status" aria-live="polite"></div>
-
-    <!-- Contenedor nuevo para el video -->
-    <div id="videoContainer" aria-live="polite" aria-atomic="true"></div>
-  </main>
-
-  <footer>
-    Created and maintained by <a href="https://github.com/adriancorro" target="_blank" rel="noopener">Adrian GitHub</a>
-    and <strong>OpenAI</strong>
-  </footer>
+  <footer style="display:none"></footer>
 
   <script>
-    /* ---------- Fondo dinámico (tu código original) ---------- */
-    const bg = document.getElementById("bg"), ctx = bg.getContext("2d");
-    function resize() { bg.width = innerWidth; bg.height = innerHeight; } window.addEventListener("resize", resize); resize();
-    const lines = Array.from({ length: 25 }, () => ({ x: Math.random() * innerWidth, y: Math.random() * innerHeight, len: Math.random() * 80 + 40, ang: Math.random() * Math.PI * 2, spd: Math.random() * 0.3 + 0.15, alp: Math.random() * 0.3 + 0.1 }));
-    function animateLines() {
-      ctx.fillStyle = "rgba(0,0,20,0.25)"; ctx.fillRect(0, 0, bg.width, bg.height);
-      lines.forEach(l => {
-        l.x += Math.cos(l.ang) * l.spd; l.y += Math.sin(l.ang) * l.spd;
-        if (l.x < 0 || l.x > innerWidth || l.y < 0 || l.y > innerHeight) { l.x = Math.random() * innerWidth; l.y = Math.random() * innerHeight; }
-        const x2 = l.x + Math.cos(l.ang) * l.len, y2 = l.y + Math.sin(l.ang) * l.len;
-        ctx.strokeStyle = `rgba(0,255,255,${l.alp})`; ctx.beginPath(); ctx.moveTo(l.x, l.y); ctx.lineTo(x2, y2); ctx.stroke();
-      });
-      requestAnimationFrame(animateLines);
-    } animateLines();
+    /* ------------------ Canvas ambient lines & meteor (tu versión mejorada) ------------------ */
+    // create a fullscreen canvas behind the stage for subtle moving grid
+    (function () {
+      // background canvas for subtle moving grid centered behind stage
+      const canvas = document.createElement('canvas');
+      canvas.style.position = 'fixed';
+      canvas.style.inset = '0';
+      canvas.style.zIndex = '0';
+      canvas.style.pointerEvents = 'none';
+      document.body.appendChild(canvas);
+      const ctx = canvas.getContext('2d');
+      function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+      resize(); window.addEventListener('resize', resize);
 
-    const meteor = document.getElementById("meteor"), mctx = meteor.getContext("2d");
-    function resizeM() { meteor.width = innerWidth; meteor.height = innerHeight; } resizeM(); window.addEventListener("resize", resizeM);
-    function drawMeteor() {
-      const sx = -50, sy = Math.random() * innerHeight * 0.4, ex = innerWidth + 100, ey = sy + 200, dur = 2000, start = performance.now(), trail = [];
-      function step(t) {
-        const p = (t - start) / dur; if (p > 1) return;
-        const x = sx + (ex - sx) * p, y = sy + (ey - sy) * p; trail.push({ x, y }); if (trail.length > 8) trail.shift();
-        mctx.clearRect(0, 0, meteor.width, meteor.height);
-        for (let i = 0; i < trail.length; i++) { const a = i / trail.length; mctx.beginPath(); mctx.arc(trail[i].x, trail[i].y, 2, 0, Math.PI * 2); mctx.fillStyle = `rgba(0,255,255,${a})`; mctx.shadowColor = "#8b5cff"; mctx.shadowBlur = 15; mctx.fill(); }
-        mctx.font = "bold 28px Orbitron"; mctx.fillStyle = "rgba(0,255,255,0.95)"; mctx.shadowColor = "#8b5cff"; mctx.shadowBlur = 25; mctx.fillText("777", x, y);
-        requestAnimationFrame(step);
+      const ticks = [];
+      for (let i = 0; i < 120; i++) {
+        ticks.push({ x: Math.random() * innerWidth, y: Math.random() * innerHeight, l: Math.random() * 120 + 30, w: Math.random() * 1.2 + 0.2, a: Math.random() * 0.35 + 0.05, vx: (Math.random() - 0.5) * 0.2, vy: (Math.random() - 0.5) * 0.2 });
       }
-      requestAnimationFrame(step);
-    }
-    setInterval(drawMeteor, 7000);
 
-    /* ---------- Cliente: sessionId en localStorage + envio timeZone ---------- */
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // soft vignette
+        const grad = ctx.createRadialGradient(canvas.width * 0.5, canvas.height * 0.35, 50, canvas.width * 0.5, canvas.height * 0.35, Math.max(canvas.width, canvas.height));
+        grad.addColorStop(0, 'rgba(0,12,20,0)');
+        grad.addColorStop(1, 'rgba(0,0,0,0.5)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ticks.forEach(t => {
+          t.x += t.vx; t.y += t.vy;
+          if (t.x < -200) t.x = canvas.width + 200;
+          if (t.x > canvas.width + 200) t.x = -200;
+          if (t.y < -200) t.y = canvas.height + 200;
+          if (t.y > canvas.height + 200) t.y = -200;
+          ctx.beginPath();
+          ctx.moveTo(t.x, t.y);
+          ctx.lineTo(t.x + Math.cos(t.x + t.y) * t.l, t.y + Math.sin(t.x - t.y) * t.l);
+          ctx.strokeStyle = 'rgba(0,240,255,' + t.a + ')';
+          ctx.lineWidth = t.w;
+          ctx.stroke();
+        });
+
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    /* ------------------ Session + API client code (adaptado de tu original) ------------------ */
     const API_URL = `${window.location.origin}/api/route`;
 
     function getSessionId() {
@@ -342,15 +599,15 @@
     }
 
     function typeText(el, txt, speed = 8) {
-      // Uso de nodos de texto para evitar XSS
       el.textContent = "";
       let i = 0;
       const cursor = document.createElement("span");
       cursor.style.display = "inline-block";
       cursor.style.width = "8px";
       cursor.style.height = "1em";
-      cursor.style.background = "#00ffff";
-      cursor.style.marginLeft = "3px";
+      cursor.style.background = "linear-gradient(90deg, #00f0ff, #b24bff)";
+      cursor.style.marginLeft = "6px";
+      cursor.style.borderRadius = "2px";
       el.appendChild(cursor);
       const int = setInterval(() => {
         const ch = document.createTextNode(txt.charAt(i));
@@ -376,34 +633,33 @@
       return data;
     }
 
-    const btn = document.getElementById("sendBtn"), resp = document.getElementById("respuesta"), textarea = document.getElementById("prompt");
-    const videoContainer = document.getElementById("videoContainer");
+    const btn = document.getElementById("sendBtn"),
+      resp = document.getElementById("respuesta"),
+      textarea = document.getElementById("prompt"),
+      videoContainer = document.getElementById("videoContainer");
+
     let expectingLocation = false;
 
     // Renderiza/actualiza el contenedor de video
     function renderVideo(videoId) {
-      // limpia
       videoContainer.innerHTML = "";
       if (!videoId) return;
-      // Construir src con autoplay y muted para maximizar la posibilidad de autoplay
+      // autoplay muted by default to improve chance of autoplay
       const srcMuted = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0&modestbranding=1&playsinline=1`;
       const wrap = document.createElement("div");
       wrap.className = "video-wrap";
       const iframe = document.createElement("iframe");
       iframe.src = srcMuted;
-      iframe.title = "Vídeo del autor";
       iframe.allow = "autoplay; encrypted-media; fullscreen; picture-in-picture";
-      iframe.loading = "lazy";
+      iframe.title = "Vídeo asociado a Aurorael";
       wrap.appendChild(iframe);
       videoContainer.appendChild(wrap);
 
-      // Controles: reproducir con sonido, abrir en YouTube
       const controls = document.createElement("div");
       controls.className = "video-controls";
       const playBtn = document.createElement("button");
       playBtn.textContent = "Reproducir con sonido";
       playBtn.addEventListener("click", () => {
-        // Reemplaza src por mute=0 (necesita interacción del usuario)
         iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&rel=0&modestbranding=1&playsinline=1`;
       });
       const openBtn = document.createElement("a");
@@ -411,23 +667,28 @@
       openBtn.target = "_blank";
       openBtn.rel = "noreferrer noopener";
       openBtn.textContent = "Abrir en YouTube";
+      openBtn.style.color = "#bfefff";
+      openBtn.style.textDecoration = "none";
+      openBtn.style.padding = "8px 12px";
+      openBtn.style.borderRadius = "8px";
+      openBtn.style.background = "rgba(255,255,255,0.02)";
       controls.appendChild(playBtn);
       controls.appendChild(openBtn);
       videoContainer.appendChild(controls);
+
       const note = document.createElement("small");
       note.style.color = "#bfefff";
-      note.style.marginTop = "6px";
       note.textContent = "Si no se escucha, pulsa 'Reproducir con sonido' (políticas de autoplay del navegador).";
       videoContainer.appendChild(note);
     }
 
     btn.addEventListener("click", async () => {
       const raw = textarea.value.trim();
-      if (!raw) { resp.textContent = "Por favor, escríbele a Hegel."; return; }
+      if (!raw) { resp.textContent = "Por favor, escríbele a Aurorael."; return; }
 
       const locationToSend = expectingLocation ? raw : "";
 
-      resp.textContent = expectingLocation ? "🗺 Enviando ubicación..." : "🌀 Consultando a Hegel...";
+      resp.textContent = expectingLocation ? "🗺 Enviando ubicación..." : "🌀 Consultando a Aurorael...";
       textarea.disabled = true; btn.disabled = true;
 
       try {
@@ -437,7 +698,6 @@
           resp.textContent = data.error;
           expectingLocation = false;
           textarea.placeholder = "Escribe tu pregunta...";
-          // ocultar video si lo hubiera
           renderVideo(null);
         } else if (data.result) {
           const text = data.result;
@@ -447,18 +707,15 @@
             textarea.placeholder = "Indica ciudad, país (ej. Madrid, España)";
             textarea.value = "";
             typeText(resp, text, 8);
-            // ocultar video (porque servidor está pidiendo ubicación)
             renderVideo(null);
           } else {
             expectingLocation = false;
             textarea.placeholder = "Escribe tu pregunta...";
             textarea.value = "";
             typeText(resp, text, 6);
-            // Si la API devolvió videoId, renderizar el video debajo
             if (data.videoId) {
               renderVideo(data.videoId);
             } else {
-              // si no, limpiar
               renderVideo(null);
             }
           }
@@ -480,6 +737,12 @@
     textarea.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); btn.click(); }
     });
+
+    // small enhancement: prefill prompt with example on first load
+    if (!localStorage.getItem('seenWelcome')) {
+      textarea.value = "¿Quién te creó?";
+      localStorage.setItem('seenWelcome', '1');
+    }
   </script>
 </body>
 

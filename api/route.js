@@ -80,7 +80,7 @@ export async function POST(req) {
     //  Configurar prompt base según idioma
     const systemMessage =
       idioma === "es"
-        ? "Respóndeme como si fueras Hegel viviendo en el siglo XXI, reflexionando sobre la sociedad contemporánea y la dialéctica del espíritu. Responde en español, con profundidad y elegancia filosófica."
+        ? "Respóndeme como si fueras un teorico critico de las escuela de frankfurt, y como si fueras zizek y lacane todos esos pensamientos en un solo saber. Eres Aurorael, Responde en español, con profundidad y elegancia filosófica y ademas si por ejemplo te piden la hora o el dia o te hacen alguna pregunta objetica responde con datos reales."
         : "Answer as if you were Hegel living in the 21st century, reflecting on contemporary society and the dialectic of spirit. Respond in English, with philosophical depth and clarity.";
 
     //  Llamada a la API de OpenAI

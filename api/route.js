@@ -37,11 +37,18 @@ function detectLanguage(text = "") {
   return isEn ? "en" : "es";
 }
 
-function isTimeOrDateQuestion(text = "") {
+// Detección fina: hora vs clima vs fecha
+function isWeatherQuestion(text = "") {
   const lower = text.toLowerCase();
-  const esMatch = /\b(hora|qué hora|que hora|qué día|que día|fecha|hoy|día de hoy|día es hoy|clima|tiempo|frío|frio|calor)\b/.test(lower);
-  const enMatch = /\b(time|what time|date|today|current time|weather|temperature|cold|hot)\b/.test(lower);
-  return esMatch || enMatch;
+  return /\b(clima|tiempo|temperatura|frío|frio|calor|¿cuánto (frío|calor)|weather|temperature|cold|hot)\b/.test(lower);
+}
+function isTimeQuestion(text = "") {
+  const lower = text.toLowerCase();
+  return /\b(hora|qué hora|que hora|what time|current time|qué hora es|what's the time|whats the time)\b/.test(lower);
+}
+function isDateQuestion(text = "") {
+  const lower = text.toLowerCase();
+  return /\b(fecha|qué día|que día|qué fecha|what date|what's the date|today|qué día es hoy|what day)\b/.test(lower);
 }
 
 function extractLocationFromPrompt(prompt = "") {
@@ -54,21 +61,44 @@ function extractLocationFromPrompt(prompt = "") {
   return match[1].trim().replace(/[?¡!]+$/, "");
 }
 
-function getCurrentTimes() {
-  const now = new Date();
-  const serverLocal = now.toLocaleString();
-  const utc = now.toISOString();
-  let madrid = null;
+// Formateo de hora usando IANA timezone (si cliente envía timeZone)
+function formatTimeFromTimeZone(timeZone, locale = "es-ES") {
   try {
-    madrid = now.toLocaleString("es-ES", {
-      timeZone: "Europe/Madrid",
+    const now = new Date();
+    const full = new Intl.DateTimeFormat(locale, {
       dateStyle: "full",
       timeStyle: "long",
-    });
+      timeZone,
+    }).format(now);
+    const short = new Intl.DateTimeFormat(locale, {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      timeZone,
+    }).format(now);
+    return { full, short };
   } catch (e) {
-    madrid = null;
+    // timezone inválida o no soportada
+    return null;
   }
-  return { serverLocal, utc, madrid };
+}
+
+// Fallback: formateo desde offset (segundos) devuelto por OpenWeather
+function formatTimeFromOffset(timezoneOffsetSeconds, locale = "es-ES") {
+  const ms = Date.now() + (timezoneOffsetSeconds * 1000);
+  const date = new Date(ms);
+  const full = new Intl.DateTimeFormat(locale, {
+    dateStyle: "full",
+    timeStyle: "long",
+    timeZone: "UTC",
+  }).format(date);
+  const short = new Intl.DateTimeFormat(locale, {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    timeZone: "UTC"
+  }).format(date);
+  return { full, short };
 }
 
 // ------------------- Session store (POC in-memory) -------------------
@@ -84,7 +114,7 @@ function createSession() {
 function getSession(id) {
   if (!id) return null;
   const s = SESSIONS.get(id);
-  if (s && Date.now() - s.createdAt > 1000 * 60 * 60 * 6) { // caduca a 6 horas (ejemplo)
+  if (s && Date.now() - s.createdAt > 1000 * 60 * 60 * 6) { // caduca a 6 horas
     SESSIONS.delete(id);
     return null;
   }
@@ -116,11 +146,12 @@ export async function POST(req) {
     const origin = req.headers.get("origin") || "";
     const headersBase = corsHeaders(origin);
 
-    // Parse body (puede contener prompt, sessionId, location opcional)
+    // Parse body (puede contener prompt, sessionId, location opcional, timeZone opcional)
     const body = await req.json().catch(() => ({}));
     const prompt = (body?.prompt || "").toString().trim();
     const sessionIdFromBody = (body?.sessionId || "").toString().trim();
     const providedLocation = (body?.location || "").toString().trim();
+    const clientTimeZone = (body?.timeZone || "").toString().trim(); // nuevo: timezone IANA desde el cliente
 
     // Recuperar o crear sesión basada en sessionId recibido desde localStorage
     let session = null;
@@ -147,61 +178,113 @@ export async function POST(req) {
       session.pendingLocation = false;
     }
 
-    // Preguntas de tiempo / clima / fecha / hora
-    if (isTimeOrDateQuestion(prompt)) {
-      // Extraer location del prompt (si dice "en Madrid" etc)
+    // Manejo separado: TIME vs WEATHER vs DATE
+    if (isTimeQuestion(prompt) || isWeatherQuestion(prompt) || isDateQuestion(prompt)) {
+      // Intentamos extraer location (o usar la session.lastLocation / providedLocation)
       const extracted = extractLocationFromPrompt(prompt);
       const locationToUse = extracted || session.lastLocation || providedLocation || null;
 
-      if (!locationToUse) {
-        // No tenemos ubicación -> pedimos al usuario que la indique
+      // Si no tenemos ubicación -> pedimos al usuario que la indique
+      if (!locationToUse && !clientTimeZone) {
         session.pendingLocation = true;
         session.history.push({ role: "assistant", content: "PENDING_LOCATION" });
         const idioma = detectLanguage(prompt);
         const askEs = "¿De qué ciudad/país hablas? Indica ciudad y país (ej. Madrid, España).";
         const askEn = "Which city/country are you referring to? Please provide city and country (e.g. Madrid, Spain).";
         const message = idioma === "es" ? askEs : askEn;
-        return new Response(JSON.stringify({ result: message, sessionId }), {
-          status: 200,
-          headers: headersBase,
-        });
+        return new Response(JSON.stringify({ result: message, sessionId }), { status: 200, headers: headersBase });
       }
 
-      // Si tenemos location, consultamos OpenWeather y devolvemos dato objetivo + comentario filosófico
+      // Si es pregunta de HORA y el cliente envió timeZone -> usar timeZone directamente (no OpenWeather)
+      if (isTimeQuestion(prompt) && clientTimeZone) {
+        const locale = detectLanguage(prompt) === "es" ? "es-ES" : "en-US";
+        const times = formatTimeFromTimeZone(clientTimeZone, locale);
+        if (times) {
+          const idioma = detectLanguage(prompt);
+          const answerEs = `Hora local (según tu zona): ${times.short}.\nFecha completa: ${times.full}`;
+          const answerEn = `Local time (based on your timezone): ${times.short}.\nFull date: ${times.full}`;
+          const final = idioma === "es" ? answerEs : answerEn;
+          // no necesitamos cambiar lastLocation si sólo usamos timeZone
+          session.pendingLocation = false;
+          session.history.push({ role: "assistant", content: final });
+          return new Response(JSON.stringify({ result: final, sessionId }), { status: 200, headers: headersBase });
+        }
+        // si timeZone no válido, seguiremos al flujo que usa OpenWeather
+      }
+
+      // Si tenemos location (o no teníamos timeZone legal), consultamos OpenWeather para obtener datos objetivos
       try {
-        const weather = await fetchWeatherForLocation(locationToUse);
-        const idioma = detectLanguage(prompt);
-        const tempStr = `Temp: ${weather.temp} °C (sensación: ${weather.feels} °C). Condición: ${weather.desc}.`;
-        const styleEs = `Objetivamente, en ${weather.name}${weather.country ? ", " + weather.country : ""} ahora mismo ${tempStr}`;
-        const styleEn = `Objectively, in ${weather.name}${weather.country ? ", " + weather.country : ""} right now ${tempStr}`;
-        const philosophicalEs = "Comentario (filosófico breve): observa cómo la sensación térmica articula la relación entre cuerpo social y entorno material.";
-        const philosophicalEn = "Philosophical note: observe how felt temperature articulates the relation between the social body and material environment.";
-        const finalText = (idioma === "es" ? `${styleEs}\n\n${philosophicalEs}` : `${styleEn}\n\n${philosophicalEn}`);
+        const weather = await fetchWeatherForLocation(locationToUse || session.lastLocation);
 
-        // Guardar memoria
-        session.lastLocation = locationToUse;
-        session.pendingLocation = false;
-        session.history.push({ role: "assistant", content: finalText });
+        // Si la pregunta es de HORA -> usamos timezone (offset) de OpenWeather si no teníamos timeZone
+        if (isTimeQuestion(prompt)) {
+          const tzOffset = weather.raw?.timezone ?? 0; // segundos
+          const locale = detectLanguage(prompt) === "es" ? "es-ES" : "en-US";
+          const times = formatTimeFromOffset(tzOffset, locale);
+          const idioma = detectLanguage(prompt);
+          const answerEs = `Hora local en ${weather.name}${weather.country ? ", " + weather.country : ""}: ${times.short}.\nFecha completa: ${times.full}`;
+          const answerEn = `Local time in ${weather.name}${weather.country ? ", " + weather.country : ""}: ${times.short}.\nFull date: ${times.full}`;
+          const final = idioma === "es" ? answerEs : answerEn;
+          session.lastLocation = locationToUse || session.lastLocation;
+          session.pendingLocation = false;
+          session.history.push({ role: "assistant", content: final });
+          return new Response(JSON.stringify({ result: final, sessionId }), { status: 200, headers: headersBase });
+        }
 
-        return new Response(JSON.stringify({ result: finalText, sessionId }), {
-          status: 200,
-          headers: headersBase,
-        });
+        // Si la pregunta es de CLIMA -> comportamiento anterior (temp + comentario)
+        if (isWeatherQuestion(prompt)) {
+          const idioma = detectLanguage(prompt);
+          const tempStr = `Temp: ${weather.temp} °C (sensación: ${weather.feels} °C). Condición: ${weather.desc}.`;
+          const styleEs = `Objetivamente, en ${weather.name}${weather.country ? ", " + weather.country : ""} ahora mismo ${tempStr}`;
+          const styleEn = `Objectively, in ${weather.name}${weather.country ? ", " + weather.country : ""} right now ${tempStr}`;
+          const philosophicalEs = "Comentario (filosófico breve): observa cómo la sensación térmica articula la relación entre cuerpo social y entorno material.";
+          const philosophicalEn = "Philosophical note: observe how felt temperature articulates the relation between the social body and material environment.";
+          const finalText = (idioma === "es" ? `${styleEs}\n\n${philosophicalEs}` : `${styleEn}\n\n${philosophicalEn}`);
+          session.lastLocation = locationToUse || session.lastLocation;
+          session.pendingLocation = false;
+          session.history.push({ role: "assistant", content: finalText });
+          return new Response(JSON.stringify({ result: finalText, sessionId }), { status: 200, headers: headersBase });
+        }
+
+        // Si la pregunta es de FECHA -> usamos offset de OpenWeather (si no se envió timeZone)
+        if (isDateQuestion(prompt)) {
+          const idioma = detectLanguage(prompt);
+          // preferimos clientTimeZone si existe
+          if (clientTimeZone) {
+            const times = formatTimeFromTimeZone(clientTimeZone, idioma === "es" ? "es-ES" : "en-US");
+            if (times) {
+              const ansEs = `Fecha y hora local (según tu zona): ${times.full}`;
+              const ansEn = `Local date and time (based on your timezone): ${times.full}`;
+              const final = idioma === "es" ? ansEs : ansEn;
+              session.lastLocation = locationToUse || session.lastLocation;
+              session.pendingLocation = false;
+              session.history.push({ role: "assistant", content: final });
+              return new Response(JSON.stringify({ result: final, sessionId }), { status: 200, headers: headersBase });
+            }
+          }
+          // fallback a offset
+          const tz = weather.raw?.timezone ?? 0;
+          const times = formatTimeFromOffset(tz, detectLanguage(prompt) === "es" ? "es-ES" : "en-US");
+          const answerEs = `Fecha y hora local en ${weather.name}${weather.country ? ", " + weather.country : ""}: ${times.full}`;
+          const answerEn = `Local date and time in ${weather.name}${weather.country ? ", " + weather.country : ""}: ${times.full}`;
+          const final = detectLanguage(prompt) === "es" ? answerEs : answerEn;
+          session.lastLocation = locationToUse || session.lastLocation;
+          session.pendingLocation = false;
+          session.history.push({ role: "assistant", content: final });
+          return new Response(JSON.stringify({ result: final, sessionId }), { status: 200, headers: headersBase });
+        }
+
       } catch (errWeather) {
         console.error("Weather fetch error:", errWeather);
         const idioma = detectLanguage(prompt);
         const msg = idioma === "es"
-          ? "No pude obtener el clima para esa ubicación. Asegúrate de escribir `Ciudad, País` o prueba otra ubicación."
-          : "Could not fetch weather for that location. Make sure you provided `City, Country` or try another location.";
-        return new Response(JSON.stringify({ error: msg, sessionId }), {
-          status: 500,
-          headers: headersBase,
-        });
+          ? "No pude obtener datos para esa ubicación. Asegúrate de escribir `Ciudad, País` o prueba otra ubicación."
+          : "Could not fetch data for that location. Make sure you provided `City, Country` or try another location.";
+        return new Response(JSON.stringify({ error: msg, sessionId }), { status: 500, headers: headersBase });
       }
     }
 
     // ------------------- Caso general: pasar a OpenAI con contexto de sesión -------------------
-    // Mantener solo un historial corto para no exceder tokens
     const MAX_HISTORY = 8;
     const historyForModel = session.history.slice(-MAX_HISTORY).map(h => ({ role: h.role, content: h.content }));
 

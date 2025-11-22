@@ -2,26 +2,53 @@
 <html lang="es">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Hegel 2052</title>
   <link rel="icon" type="image/png" sizes="512x512" href="img/hegel.png" />
-  <!-- Vercel Web Analytics (si no lo usas, puedes quitarlo) -->
-  <script defer src="https://vercel.com/analytics/script.js"></script>
-  <script>
-    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-  </script>
-  <script defer src="/_vercel/insights/script.js"></script>
-
   <style>
     @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&family=Exo+2:wght@400;600&display=swap");
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; font-family: "Exo 2", sans-serif; color: #ccfaff; background: #000; overflow-x: hidden; }
-    body { display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
 
-    .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden; }
-    canvas { position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; }
+    html,
+    body {
+      height: 100%;
+      font-family: "Exo 2", sans-serif;
+      color: #ccfaff;
+      background: #000;
+      overflow-x: hidden
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative
+    }
+
+    .bg-layer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden
+    }
+
+    canvas {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none
+    }
 
     body::before {
       content: "";
@@ -30,53 +57,159 @@
       background: radial-gradient(circle at 50% 50%, #021025 0%, #000010 100%);
       background-size: 200% 200%;
       animation: bgShift 10s ease-in-out infinite alternate;
-      z-index: 0;
+      z-index: 0
     }
-    @keyframes bgShift { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+
+    @keyframes bgShift {
+      0% {
+        background-position: 0% 50%
+      }
+
+      100% {
+        background-position: 100% 50%
+      }
+    }
 
     main {
-      flex: 1; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      text-align: center; padding: 60px 20px;
+      flex: 1;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 20px
     }
 
-    .hegel-face { width: 260px; height: 260px; margin-bottom: 25px; stroke: url(#neonGradient); stroke-width: 1.2; fill: none;
-      stroke-linecap: round; stroke-linejoin: bevel; filter: drop-shadow(0 0 25px #00ffff); animation: facePulse 6s ease-in-out infinite alternate; }
-    @keyframes facePulse { from { filter: drop-shadow(0 0 20px #00ffff); } to { filter: drop-shadow(0 0 40px #8b5cff); } }
+    .hegel-face {
+      width: 260px;
+      height: 260px;
+      margin-bottom: 25px;
+      filter: drop-shadow(0 0 25px #00ffff);
+      animation: facePulse 6s ease-in-out infinite alternate
+    }
 
-    h1 { font-family: "Orbitron", sans-serif; font-size: 3em; text-transform: uppercase; letter-spacing: 6px;
-      background: linear-gradient(90deg, #00ffff, #8b5cff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 25px #00ffff, 0 0 45px #8b5cff; margin-bottom: 10px; }
-    p { font-size: 1.1em; color: #aeeaff; text-shadow: 0 0 10px #00ffff; margin-bottom: 30px; }
+    @keyframes facePulse {
+      from {
+        filter: drop-shadow(0 0 20px #00ffff)
+      }
+
+      to {
+        filter: drop-shadow(0 0 40px #8b5cff)
+      }
+    }
+
+    h1 {
+      font-family: "Orbitron", sans-serif;
+      font-size: 3em;
+      text-transform: uppercase;
+      letter-spacing: 6px;
+      background: linear-gradient(90deg, #00ffff, #8b5cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 25px #00ffff, 0 0 45px #8b5cff;
+      margin-bottom: 10px
+    }
+
+    p {
+      font-size: 1.1em;
+      color: #aeeaff;
+      text-shadow: 0 0 10px #00ffff;
+      margin-bottom: 30px
+    }
 
     textarea {
-      width: 90%; max-width: 550px; height: 130px; background: rgba(0, 255, 255, 0.05); border: 1px solid #00ffff;
-      color: #aafaff; font-size: 16px; border-radius: 12px; padding: 12px; resize: none; outline: none; backdrop-filter: blur(8px);
-      box-shadow: 0 0 15px #0077ff33;
+      width: 90%;
+      max-width: 550px;
+      height: 130px;
+      background: rgba(0, 255, 255, 0.05);
+      border: 1px solid #00ffff;
+      color: #aafaff;
+      font-size: 16px;
+      border-radius: 12px;
+      padding: 12px;
+      resize: none;
+      outline: none;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 0 15px #0077ff33
     }
 
     button {
-      margin-top: 25px; background: linear-gradient(90deg, #00ffff, #8b5cff); color: #000; border: none; font-weight: bold;
-      font-size: 17px; padding: 14px 40px; border-radius: 50px; cursor: pointer; box-shadow: 0 0 25px #00ffff; transition: all .3s ease-in-out;
+      margin-top: 25px;
+      background: linear-gradient(90deg, #00ffff, #8b5cff);
+      color: #000;
+      border: none;
+      font-weight: bold;
+      font-size: 17px;
+      padding: 14px 40px;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 0 25px #00ffff;
+      transition: all .3s ease-in-out
     }
-    button:hover { transform: scale(1.08); box-shadow: 0 0 40px #9b59ff; }
+
+    button:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 40px #9b59ff
+    }
 
     #respuesta {
-      margin-top: 35px; width: 90%; max-width: 650px; background: rgba(0, 15, 25, .55); border-radius: 14px; padding: 25px;
-      border: 1px solid #00ffff80; white-space: pre-wrap; overflow-wrap: break-word; word-break: break-word; font-size: 1.1em;
-      text-shadow: 0 0 12px #00ffff99; min-height: 120px; line-height: 1.6; box-shadow: 0 0 25px #00336688 inset; color: #d8ffff;
+      margin-top: 35px;
+      width: 90%;
+      max-width: 650px;
+      background: rgba(0, 15, 25, .55);
+      border-radius: 14px;
+      padding: 25px;
+      border: 1px solid #00ffff80;
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
+      word-break: break-word;
+      font-size: 1.1em;
+      text-shadow: 0 0 12px #00ffff99;
+      min-height: 120px;
+      line-height: 1.6;
+      box-shadow: 0 0 25px #00336688 inset;
+      color: #d8ffff
     }
 
     footer {
-      position: fixed; bottom: 0; left: 0; width: 100%; z-index: 9999; text-align: center; padding: 20px 0;
-      background: rgba(0, 10, 25, 0.9); border-top: 1px solid rgba(0, 255, 255, 0.3); box-shadow: 0 -4px 25px rgba(0, 255, 255, 0.1);
-      font-size: 0.8em; color: #c8ffff; text-shadow: 0 0 8px #00ffff;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      z-index: 9999;
+      text-align: center;
+      padding: 20px 0;
+      background: rgba(0, 10, 25, 0.9);
+      border-top: 1px solid rgba(0, 255, 255, 0.3);
+      box-shadow: 0 -4px 25px rgba(0, 255, 255, 0.1);
+      font-size: 0.8em;
+      color: #c8ffff;
+      text-shadow: 0 0 8px #00ffff
     }
-    footer a { color: #00ffff; text-decoration: none; font-weight: bold; text-shadow: 0 0 10px #00ffff; transition: .3s; }
-    footer a:hover { color: #9b59ff; text-shadow: 0 0 15px #9b59ff; }
+
+    footer a {
+      color: #00ffff;
+      text-decoration: none;
+      font-weight: bold;
+      text-shadow: 0 0 10px #00ffff;
+      transition: .3s
+    }
+
+    footer a:hover {
+      color: #9b59ff;
+      text-shadow: 0 0 15px #9b59ff
+    }
 
     @media(max-width:600px) {
-      h1 { font-size: 2em; }
-      .hegel-face { width: 160px; height: 160px; }
+      h1 {
+        font-size: 2em
+      }
+
+      .hegel-face {
+        width: 160px;
+        height: 160px
+      }
     }
   </style>
 </head>
@@ -88,27 +221,27 @@
   </div>
 
   <main>
-    <svg class="hegel-face" viewBox="0 0 100 100">
+    <svg class="hegel-face" viewBox="0 0 100 100" aria-hidden="true">
       <defs>
         <linearGradient id="neonGradient" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stop-color="#00ffff" />
           <stop offset="100%" stop-color="#8b5cff" />
         </linearGradient>
       </defs>
-      <path d="M25 25 L75 25 Q90 40 80 75 Q70 95 50 95 Q30 95 20 75 Q10 40 25 25 Z" stroke="url(#neonGradient)" />
+      <path d="M25 25 L75 25 Q90 40 80 75 Q70 95 50 95 Q30 95 20 75 Q10 40 25 25 Z" stroke="url(#neonGradient)"
+        fill="none" />
       <path d="M32 38 L45 36 M55 36 L68 38" stroke="#00eaff" />
       <circle cx="38" cy="45" r="2" fill="#00ffff" />
       <circle cx="62" cy="45" r="2" fill="#00ffff" />
       <path d="M35 67 Q50 76 65 67" stroke="#00ffff" fill="none" stroke-width="0.8" />
-      <polygon points="50,15 42,25 58,25" stroke="#8b5cff" fill="none" stroke-width="0.8" />
     </svg>
 
     <h1>HEGEL 2052</h1>
     <p>Reflexión dialéctica del espíritu moderno</p>
 
-    <textarea id="prompt" placeholder="Escribe tu pregunta (p.ej. ¿Cuánto frío hace?)"></textarea>
-    <button id="sendBtn">Consultar</button>
-    <div id="respuesta"></div>
+    <textarea id="prompt" placeholder="Escribe tu pregunta (p.ej. ¿Cuánto frío hace?)" aria-label="Pregunta"></textarea>
+    <button id="sendBtn" aria-label="Consultar">Consultar</button>
+    <div id="respuesta" role="status" aria-live="polite"></div>
   </main>
 
   <footer>
@@ -117,7 +250,7 @@
   </footer>
 
   <script>
-    /* ================= Fondo dinámico (sin cambios significativos) ================= */
+    /* ---------- Fondo dinámico (tu código original) ---------- */
     const bg = document.getElementById("bg"), ctx = bg.getContext("2d");
     function resize() { bg.width = innerWidth; bg.height = innerHeight; } window.addEventListener("resize", resize); resize();
     const lines = Array.from({ length: 25 }, () => ({ x: Math.random() * innerWidth, y: Math.random() * innerHeight, len: Math.random() * 80 + 40, ang: Math.random() * Math.PI * 2, spd: Math.random() * 0.3 + 0.15, alp: Math.random() * 0.3 + 0.1 }));
@@ -135,101 +268,88 @@
     const meteor = document.getElementById("meteor"), mctx = meteor.getContext("2d");
     function resizeM() { meteor.width = innerWidth; meteor.height = innerHeight; } resizeM(); window.addEventListener("resize", resizeM);
     function drawMeteor() {
-      const sx = -50, sy = Math.random() * innerHeight * 0.4, ex = innerWidth + 100, ey = sy + 200;
-      const dur = 2000, start = performance.now(), trail = [];
+      const sx = -50, sy = Math.random() * innerHeight * 0.4, ex = innerWidth + 100, ey = sy + 200, dur = 2000, start = performance.now(), trail = [];
       function step(t) {
         const p = (t - start) / dur; if (p > 1) return;
         const x = sx + (ex - sx) * p, y = sy + (ey - sy) * p; trail.push({ x, y }); if (trail.length > 8) trail.shift();
         mctx.clearRect(0, 0, meteor.width, meteor.height);
-        for (let i = 0; i < trail.length; i++) {
-          const a = i / trail.length; mctx.beginPath(); mctx.arc(trail[i].x, trail[i].y, 2, 0, Math.PI * 2);
-          mctx.fillStyle = `rgba(0,255,255,${a})`; mctx.shadowColor = "#8b5cff"; mctx.shadowBlur = 15; mctx.fill();
-        }
-        mctx.font = "bold 28px Orbitron"; mctx.fillStyle = "rgba(0,255,255,0.95)"; mctx.shadowColor = "#8b5cff"; mctx.shadowBlur = 25;
-        mctx.fillText("777", x, y);
+        for (let i = 0; i < trail.length; i++) { const a = i / trail.length; mctx.beginPath(); mctx.arc(trail[i].x, trail[i].y, 2, 0, Math.PI * 2); mctx.fillStyle = `rgba(0,255,255,${a})`; mctx.shadowColor = "#8b5cff"; mctx.shadowBlur = 15; mctx.fill(); }
+        mctx.font = "bold 28px Orbitron"; mctx.fillStyle = "rgba(0,255,255,0.95)"; mctx.shadowColor = "#8b5cff"; mctx.shadowBlur = 25; mctx.fillText("777", x, y);
         requestAnimationFrame(step);
       }
       requestAnimationFrame(step);
     }
     setInterval(drawMeteor, 7000);
 
-    /* =================== Lógica cliente + interacción con servidor =================== */
-
-    // API URL (funciona tanto en local como en producción)
+    /* ---------- Cliente: sessionId en localStorage + envio timeZone ---------- */
     const API_URL = `${window.location.origin}/api/route`;
 
-    // Obtener/crear sessionId guardado en localStorage
     function getSessionId() {
       let id = localStorage.getItem("sessionId");
       if (!id) {
-        // crypto.randomUUID es soportado por navegadores modernos
-        try {
-          id = crypto.randomUUID();
-        } catch (e) {
-          // fallback simple
-          id = 'sess-' + Math.random().toString(36).slice(2, 10);
-        }
+        try { id = crypto.randomUUID(); } catch (e) { id = 'sess-' + Math.random().toString(36).slice(2, 10); }
         localStorage.setItem("sessionId", id);
       }
       return id;
     }
 
-    // Escribiendo texto con efecto
+    function serverAsksForLocation(text) {
+      if (!text) return false;
+      const lower = text.toLowerCase();
+      return lower.includes("¿de qué ciudad") || lower.includes("indica ciudad y país") ||
+        lower.includes("which city/country") || lower.includes("please provide city and country");
+    }
+
     function typeText(el, txt, speed = 8) {
-      el.innerHTML = "";
+      // Uso de nodos de texto para evitar XSS
+      el.textContent = "";
       let i = 0;
-      const cur = document.createElement("span");
-      cur.style.display = "inline-block"; cur.style.width = "8px"; cur.style.height = "1em";
-      cur.style.background = "#00ffff"; cur.style.marginLeft = "3px";
-      el.appendChild(cur);
+      const cursor = document.createElement("span");
+      cursor.style.display = "inline-block";
+      cursor.style.width = "8px";
+      cursor.style.height = "1em";
+      cursor.style.background = "#00ffff";
+      cursor.style.marginLeft = "3px";
+      el.appendChild(cursor);
       const int = setInterval(() => {
-        el.insertBefore(document.createTextNode(txt.charAt(i)), cur);
+        const ch = document.createTextNode(txt.charAt(i));
+        el.insertBefore(ch, cursor);
         i++;
-        if (i >= txt.length) { clearInterval(int); cur.remove(); }
+        if (i >= txt.length) { clearInterval(int); cursor.remove(); }
       }, speed);
     }
 
-    // Control de estado (si servidor pidió location)
-    let expectingLocation = false;
-
-    // Función principal que realiza la petición al servidor
-    async function sendPromptToServer(prompt, location = "") {
+    async function sendPrompt(prompt, location = "") {
       const sessionId = getSessionId();
+      const tz = (Intl && Intl.DateTimeFormat) ? Intl.DateTimeFormat().resolvedOptions().timeZone : "";
       const body = { prompt, sessionId };
       if (location) body.location = location;
-
-      const r = await fetch(API_URL, {
+      if (tz) body.timeZone = tz;
+      const res = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      // Esperamos JSON
-      const data = await r.json().catch(() => ({ error: "No JSON response" }));
-      // Si el servidor devuelve sessionId, sincronizamos (aunque normalmente client ya lo tiene)
+      const data = await res.json().catch(() => ({ error: "No JSON response from server" }));
       if (data.sessionId) localStorage.setItem("sessionId", data.sessionId);
       return data;
     }
 
-    // Elementos UI
     const btn = document.getElementById("sendBtn"), resp = document.getElementById("respuesta"), textarea = document.getElementById("prompt");
+    let expectingLocation = false;
 
-    // Evento click
     btn.addEventListener("click", async () => {
       const raw = textarea.value.trim();
       if (!raw) { resp.textContent = "Por favor, escríbele a Hegel."; return; }
 
-      // Si estamos esperando location, la mandamos como campo location y un prompt mínimo
       const locationToSend = expectingLocation ? raw : "";
 
-      // Mostrar estado
-      resp.textContent = "🌀 Consultando a 010110001110 ...";
-      textarea.disabled = true;
-      btn.disabled = true;
+      resp.textContent = expectingLocation ? "🗺 Enviando ubicación..." : "🌀 Consultando a Hegel...";
+      textarea.disabled = true; btn.disabled = true;
 
       try {
-        const data = await sendPromptToServer(raw, locationToSend);
+        const data = await sendPrompt(raw, locationToSend);
 
-        // Manejar errores del servidor
         if (data.error) {
           resp.textContent = data.error;
           expectingLocation = false;
@@ -237,16 +357,12 @@
         } else if (data.result) {
           const text = data.result;
 
-          // Si el servidor pidió ubicación (texto con la pregunta específica), lo detectamos y ponemos flag
-          const asksForLocationEs = text.toLowerCase().includes("¿de qué ciudad") || text.toLowerCase().includes("indica ciudad y país");
-          const asksForLocationEn = text.toLowerCase().includes("which city/country") || text.toLowerCase().includes("please provide city and country");
-          if (asksForLocationEs || asksForLocationEn) {
+          if (serverAsksForLocation(text)) {
             expectingLocation = true;
             textarea.placeholder = "Indica ciudad, país (ej. Madrid, España)";
             textarea.value = "";
             typeText(resp, text, 8);
           } else {
-            // respuesta normal del servidor (muestra con typing)
             expectingLocation = false;
             textarea.placeholder = "Escribe tu pregunta...";
             textarea.value = "";
@@ -261,19 +377,13 @@
         resp.textContent = "Error al conectar con el servidor.";
         expectingLocation = false;
       } finally {
-        textarea.disabled = false;
-        btn.disabled = false;
+        textarea.disabled = false; btn.disabled = false;
       }
     });
 
-    // Enter para enviar (Shift+Enter -> newline)
     textarea.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        btn.click();
-      }
+      if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); btn.click(); }
     });
-
   </script>
 </body>
 

@@ -33,7 +33,8 @@
       color: #dffaff;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      background: radial-gradient(1000px 500px at 12% 18%, rgba(6, 8, 20, 0.85), transparent 12%),
+      background:
+        radial-gradient(1000px 500px at 12% 18%, rgba(6, 8, 20, 0.85), transparent 12%),
         radial-gradient(800px 420px at 90% 82%, rgba(50, 0, 80, 0.6), transparent 12%),
         var(--bg-dark);
       overflow-x: hidden;
@@ -45,20 +46,26 @@
       display: grid;
       grid-template-columns: 420px 1fr;
       gap: 36px;
-      /* hero arriba en pantallas anchas */
       align-items: start;
+      /* clave: alinear al top */
       padding: 56px 48px;
       position: relative;
     }
 
-    @media (max-width: 1100px) {
+    /* asegurar que la celda izquierda no centre su contenido */
+    .stage>div:first-child {
+      display: flex;
+      align-items: flex-start;
+    }
+
+    @media(max-width:1100px) {
       .stage {
         grid-template-columns: 1fr;
         padding: 28px;
       }
     }
 
-    @media (max-width: 640px) {
+    @media(max-width:640px) {
       .stage {
         padding: 16px;
       }
@@ -70,7 +77,8 @@
       width: 100%;
       max-width: 420px;
       height: 680px;
-      margin: auto;
+      margin: 0;
+      /* quitar centrado vertical */
       border-radius: 18px;
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.03);
@@ -82,8 +90,8 @@
     .portrait {
       position: absolute;
       inset: 0;
-      /* Ruta de la imagen subida (tal cual en tu entorno) */
-      background-image: url('/mnt/data/84535463-aa77-468c-9940-8b7c3d776f38.png');
+      /* ruta a la imagen subida */
+      background-image: url('/mnt/data/48aa7189-6385-4399-8a99-31a803abf305.png');
       background-size: cover;
       background-position: center;
       filter: contrast(1.08) saturate(1.05) hue-rotate(-3deg);
@@ -93,15 +101,15 @@
 
     @keyframes portraitFloat {
       0% {
-        transform: translateY(0) scale(1)
+        transform: translateY(0) scale(1);
       }
 
       50% {
-        transform: translateY(-10px) scale(1.01)
+        transform: translateY(-10px) scale(1.01);
       }
 
       100% {
-        transform: translateY(0) scale(1)
+        transform: translateY(0) scale(1);
       }
     }
 
@@ -144,10 +152,13 @@
       mix-blend-mode: multiply;
     }
 
+    /* card-left ahora aparece en TOP */
     .card-left {
       position: absolute;
       left: 16px;
-      bottom: 18px;
+      top: 18px;
+      /* movido arriba */
+      bottom: auto;
       width: calc(100% - 32px);
       padding: 14px;
       border-radius: 12px;
@@ -170,7 +181,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.04)
     }
 
     .title {
@@ -179,13 +190,13 @@
       letter-spacing: 6px;
       background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
       -webkit-background-clip: text;
-      color: transparent;
+      color: transparent
     }
 
     .subtitle {
       font-size: 12px;
       color: rgba(190, 255, 255, 0.9);
-      margin-top: 2px;
+      margin-top: 2px
     }
 
     /* RIGHT PANEL */
@@ -221,7 +232,7 @@
     .desc {
       font-size: 13px;
       color: #bfefff;
-      opacity: 0.9;
+      opacity: 0.9
     }
 
     .composer {
@@ -238,12 +249,12 @@
       border: 1px solid rgba(0, 255, 255, 0.06);
       background: linear-gradient(180deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.14));
       color: #ddefef;
-      box-shadow: inset 0 6px 30px rgba(0, 0, 0, 0.5);
+      box-shadow: inset 0 6px 30px rgba(0, 0, 0, 0.5)
     }
 
     textarea#prompt:focus {
       outline: none;
-      box-shadow: 0 12px 40px rgba(0, 240, 255, 0.06), 0 0 28px rgba(212, 92, 255, 0.03);
+      box-shadow: 0 12px 40px rgba(0, 240, 255, 0.06), 0 0 28px rgba(212, 92, 255, 0.03)
     }
 
     .controls {
@@ -260,11 +271,11 @@
       border-radius: 999px;
       cursor: pointer;
       font-weight: 700;
-      box-shadow: 0 12px 40px rgba(0, 240, 255, 0.12);
+      box-shadow: 0 12px 40px rgba(0, 240, 255, 0.12)
     }
 
     button#sendBtn:hover {
-      transform: translateY(-3px);
+      transform: translateY(-3px)
     }
 
     #respuesta {
@@ -291,7 +302,7 @@
       border-radius: 12px;
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.03);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6)
     }
 
     .video-controls {
@@ -326,7 +337,7 @@
       cursor: pointer;
       background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
       color: #04121a;
-      font-weight: 800;
+      font-weight: 800
     }
 
     .scanline {
@@ -370,7 +381,7 @@
       font-weight: 600;
     }
 
-    @media (max-width: 1100px) {
+    @media(max-width:1100px) {
       .hero {
         height: 420px;
         max-width: 720px;
@@ -381,7 +392,7 @@
       }
     }
 
-    @media (max-width: 640px) {
+    @media(max-width:640px) {
       .hero {
         display: none;
       }
@@ -498,7 +509,7 @@
       resize(); window.addEventListener('resize', resize);
 
       const particles = [];
-      const N = Math.round((innerWidth * innerHeight) / 80000); // scale with screen
+      const N = Math.round((innerWidth * innerHeight) / 80000);
       for (let i = 0; i < N; i++) {
         particles.push({
           x: Math.random() * canvas.width,
@@ -511,35 +522,30 @@
 
       function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        // soft radial glow center
         const g = ctx.createRadialGradient(canvas.width * 0.5, canvas.height * 0.3, 50, canvas.width * 0.5, canvas.height * 0.3, Math.max(canvas.width, canvas.height));
         g.addColorStop(0, 'rgba(0,12,30,0)');
         g.addColorStop(1, 'rgba(0,0,0,0.6)');
         ctx.fillStyle = g;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // draw particles
         particles.forEach(p => {
-          p.x += p.vx;
-          p.y += p.vy;
+          p.x += p.vx; p.y += p.vy;
           if (p.x < -50) p.x = canvas.width + 50;
           if (p.x > canvas.width + 50) p.x = -50;
           if (p.y < -50) p.y = canvas.height + 50;
           if (p.y > canvas.height + 50) p.y = -50;
 
-          // glow
           ctx.beginPath();
           const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 8);
-          grad.addColorStop(0, `rgba(0,240,255,0.12)`);
-          grad.addColorStop(0.6, `rgba(212,92,255,0.04)`);
+          grad.addColorStop(0, 'rgba(0,240,255,0.12)');
+          grad.addColorStop(0.6, 'rgba(212,92,255,0.04)');
           grad.addColorStop(1, 'rgba(0,0,0,0)');
           ctx.fillStyle = grad;
           ctx.arc(p.x, p.y, p.r * 8, 0, Math.PI * 2);
           ctx.fill();
 
-          // core dot
           ctx.beginPath();
-          ctx.fillStyle = `rgba(180,255,255,0.95)`;
+          ctx.fillStyle = 'rgba(180,255,255,0.95)';
           ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
           ctx.fill();
         });
@@ -549,19 +555,28 @@
       draw();
     })();
 
-
     /* ---------------- CLIENT + API (no autoplay on load) ---------------- */
     const API_URL = `${window.location.origin}/api/route`;
-    function getSessionId() { let id = localStorage.getItem('sessionId'); if (!id) { try { id = crypto.randomUUID() } catch (e) { id = 'sess-' + Math.random().toString(36).slice(2, 10) } localStorage.setItem('sessionId', id) } return id }
-    function serverAsksForLocation(text) { if (!text) return false; const lower = String(text).toLowerCase(); return lower.includes("¿de qué ciudad") || lower.includes("indica ciudad y país") || lower.includes("which city/country") || lower.includes("please provide city and country") }
+    function getSessionId() { let id = localStorage.getItem('sessionId'); if (!id) { try { id = crypto.randomUUID() } catch (e) { id = 'sess-' + Math.random().toString(36).slice(2, 10); } localStorage.setItem('sessionId', id); } return id; }
+    function serverAsksForLocation(text) { if (!text) return false; const lower = String(text).toLowerCase(); return lower.includes("¿de qué ciudad") || lower.includes("indica ciudad y país") || lower.includes("which city/country") || lower.includes("please provide city and country"); }
 
     function typeText(el, txt, speed = 8) {
       el.textContent = '';
       let i = 0;
-      const cursor = document.createElement('span'); cursor.style.display = 'inline-block'; cursor.style.width = '8px'; cursor.style.height = '1em';
-      cursor.style.background = 'linear-gradient(90deg,#00f0ff,#d45cff)'; cursor.style.marginLeft = '6px'; cursor.style.borderRadius = '2px';
+      const cursor = document.createElement('span');
+      cursor.style.display = 'inline-block';
+      cursor.style.width = '8px';
+      cursor.style.height = '1em';
+      cursor.style.background = 'linear-gradient(90deg,#00f0ff,#d45cff)';
+      cursor.style.marginLeft = '6px';
+      cursor.style.borderRadius = '2px';
       el.appendChild(cursor);
-      const int = setInterval(() => { const ch = document.createTextNode(txt.charAt(i)); el.insertBefore(ch, cursor); i++; if (i >= txt.length) { clearInterval(int); cursor.remove(); } }, speed);
+      const int = setInterval(() => {
+        const ch = document.createTextNode(txt.charAt(i));
+        el.insertBefore(ch, cursor);
+        i++;
+        if (i >= txt.length) { clearInterval(int); cursor.remove(); }
+      }, speed);
     }
 
     async function sendPrompt(prompt, location = "") {
@@ -576,38 +591,51 @@
       return data;
     }
 
-    const btn = document.getElementById('sendBtn'), resp = document.getElementById('respuesta'), textarea = document.getElementById('prompt'), videoContainer = document.getElementById('videoContainer');
+    const btn = document.getElementById('sendBtn'),
+      resp = document.getElementById('respuesta'),
+      textarea = document.getElementById('prompt'),
+      videoContainer = document.getElementById('videoContainer');
     let expectingLocation = false;
-
-    // default videoId (short) - but DO NOT auto-render on load
     const DEFAULT_VIDEO_ID = "jOSO3AAIUzM";
 
-    /* ---------------- keywords: cargamos /js/keywords.js dinámicamente ----------------
-       Si no existe o falla, el vídeo NO se activará.
-    */
+    /* Robust keywords loader: import('/js/keywords.js') or fetch fallback */
     let palabrasClave = null;
-    (async function loadKeywordsModule() {
+    let keywordsReady = (async function loadKeywordsModule() {
       try {
         const mod = await import('/js/keywords.js');
         if (mod && Array.isArray(mod.palabrasClave)) {
           palabrasClave = mod.palabrasClave.map(p => normalize(String(p)));
-          console.log('[keywords] cargadas:', palabrasClave.length);
-        } else {
-          console.warn('[keywords] /js/keywords.js cargado pero no exporta palabrasClave correctamente');
-          palabrasClave = null;
+          console.log('[keywords] cargadas (import):', palabrasClave.length);
+          return true;
         }
+        console.warn('[keywords] import ok but palabrasClave not found');
       } catch (e) {
-        console.warn('[keywords] No se pudo cargar /js/keywords.js — el vídeo no se activará sin ese archivo.', e);
-        palabrasClave = null;
+        console.warn('[keywords] import failed, trying fetch...', e);
+        try {
+          const r = await fetch('/js/keywords.js', { cache: "no-store" });
+          if (!r.ok) throw new Error('fetch failed: ' + r.status);
+          const txt = await r.text();
+          const arrMatch = txt.match(/export\s+const\s+palabrasClave\s*=\s*(\[[\s\S]*?\]);?/m);
+          if (arrMatch && arrMatch[1]) {
+            const arrCode = arrMatch[1];
+            const fn = new Function('return ' + arrCode);
+            const arr = fn();
+            if (Array.isArray(arr)) {
+              palabrasClave = arr.map(p => normalize(String(p)));
+              console.log('[keywords] cargadas (fetch+parse):', palabrasClave.length);
+              return true;
+            }
+          }
+          console.warn('[keywords] fetch succeeded but failed to parse palabrasClave.');
+        } catch (e2) {
+          console.warn('[keywords] fetch parse failed', e2);
+        }
       }
+      palabrasClave = null;
+      return false;
     })();
 
-    // normaliza texto: minusculas, sin tildes, sin puntuacion
-    function normalize(s) {
-      if (!s) return '';
-      return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\w\s]/g, '').toLowerCase().trim();
-    }
-
+    function normalize(s) { if (!s) return ''; return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\w\s]/g, '').toLowerCase().trim(); }
     function matchAnyKeyword(text) {
       if (!text) return false;
       if (!Array.isArray(palabrasClave) || palabrasClave.length === 0) return false;
@@ -615,7 +643,6 @@
       return palabrasClave.some(k => n.includes(k));
     }
 
-    // render video: try muted autoplay, provide CTA to unmute
     function renderVideo(videoId) {
       videoContainer.innerHTML = '';
       if (!videoId) return;
@@ -624,8 +651,8 @@
 
       // overlay CTA
       const big = document.createElement('div'); big.className = 'big-unmute';
-      const instruction = document.createElement('div'); instruction.style.maxWidth = '80%'; instruction.style.textAlign = 'center';
-      instruction.textContent = 'Pulsa para reproducir con sonido (necesario por políticas del navegador)';
+      const instr = document.createElement('div'); instr.style.maxWidth = '80%'; instr.style.textAlign = 'center';
+      instr.textContent = 'Pulsa para reproducir con sonido (necesario por políticas del navegador)';
       const bigBtn = document.createElement('button'); bigBtn.textContent = 'Reproducir con sonido';
       bigBtn.addEventListener('click', () => {
         const iframe = document.createElement('iframe');
@@ -634,40 +661,39 @@
         iframe.title = 'Aurorael video';
         iframe.src = `https://www.youtube.com/embed/${videoId}?${paramsUnmuted}`;
         videoContainer.innerHTML = '';
-        const wrap = document.createElement('div'); wrap.className = 'video-wrap'; wrap.appendChild(iframe);
-        videoContainer.appendChild(wrap);
+        const wrap = document.createElement('div'); wrap.className = 'video-wrap'; wrap.appendChild(iframe); videoContainer.appendChild(wrap);
         const controls = document.createElement('div'); controls.className = 'video-controls';
-        const openBtn = document.createElement('a'); openBtn.href = `https://www.youtube.com/watch?v=${videoId}`; openBtn.target = '_blank'; openBtn.rel = 'noreferrer noopener';
-        openBtn.textContent = 'Abrir en YouTube'; openBtn.style.padding = '8px 12px'; openBtn.style.background = 'rgba(255,255,255,0.02)'; openBtn.style.color = '#bfefff'; openBtn.style.borderRadius = '8px'; openBtn.style.textDecoration = 'none';
+        const openBtn = document.createElement('a'); openBtn.href = `https://www.youtube.com/watch?v=${videoId}`; openBtn.target = '_blank'; openBtn.rel = 'noreferrer noopener'; openBtn.textContent = 'Abrir en YouTube'; openBtn.style.padding = '8px 12px'; openBtn.style.background = 'rgba(255,255,255,0.02)'; openBtn.style.color = '#bfefff'; openBtn.style.borderRadius = '8px'; openBtn.style.textDecoration = 'none';
         controls.appendChild(openBtn); videoContainer.appendChild(controls);
       });
-      big.appendChild(instruction); big.appendChild(bigBtn);
+      big.appendChild(instr); big.appendChild(bigBtn);
 
-      // iframe muted (to allow autoplay)
       const iframeMuted = document.createElement('iframe');
       iframeMuted.width = '100%'; iframeMuted.height = '480'; iframeMuted.frameBorder = '0';
       iframeMuted.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
       iframeMuted.title = 'Aurorael video (muted)';
       iframeMuted.src = `https://www.youtube.com/embed/${videoId}?${paramsMuted}`;
 
+      // show overlay + muted iframe initially (user can unmute)
       videoContainer.appendChild(big);
-      const wrap = document.createElement('div'); wrap.className = 'video-wrap'; wrap.appendChild(iframeMuted);
-      videoContainer.appendChild(wrap);
+      const wrap = document.createElement('div'); wrap.className = 'video-wrap'; wrap.appendChild(iframeMuted); videoContainer.appendChild(wrap);
 
       const controls = document.createElement('div'); controls.className = 'video-controls';
       const playBtn = document.createElement('button'); playBtn.textContent = 'Reproducir con sonido';
       playBtn.style.padding = '8px 12px'; playBtn.style.borderRadius = '8px';
       playBtn.style.background = 'linear-gradient(90deg,#00f0ff,#d45cff)'; playBtn.style.color = '#04121a'; playBtn.style.border = 'none'; playBtn.style.cursor = 'pointer';
       playBtn.addEventListener('click', () => { iframeMuted.src = `https://www.youtube.com/embed/${videoId}?${paramsUnmuted}`; const b = document.querySelector('.big-unmute'); if (b) b.remove(); });
-      const openBtn = document.createElement('a'); openBtn.href = `https://www.youtube.com/watch?v=${videoId}`; openBtn.target = '_blank'; openBtn.rel = 'noreferrer noopener';
-      openBtn.textContent = 'Abrir en YouTube'; openBtn.style.padding = '8px 12px'; openBtn.style.background = 'rgba(255,255,255,0.02)'; openBtn.style.color = '#bfefff'; openBtn.style.borderRadius = '8px'; openBtn.style.textDecoration = 'none';
+      const openBtn = document.createElement('a'); openBtn.href = `https://www.youtube.com/watch?v=${videoId}`; openBtn.target = '_blank'; openBtn.rel = 'noreferrer noopener'; openBtn.textContent = 'Abrir en YouTube'; openBtn.style.padding = '8px 12px'; openBtn.style.background = 'rgba(255,255,255,0.02)'; openBtn.style.color = '#bfefff'; openBtn.style.borderRadius = '8px'; openBtn.style.textDecoration = 'none';
       controls.appendChild(playBtn); controls.appendChild(openBtn); videoContainer.appendChild(controls);
     }
 
-    // Main event: send prompt and show video only if keywords module loaded and match found
+    // main click handler: WAIT for keyword loader, then proceed
     btn.addEventListener('click', async () => {
       const raw = textarea.value.trim();
       if (!raw) { resp.textContent = 'Por favor, escríbele a Aurorael.'; return; }
+
+      // wait the keywords loader (but don't hang forever)
+      try { await Promise.race([keywordsReady, new Promise(res => setTimeout(res, 1200))]); } catch (e) { /* ignore */ }
 
       const locationToSend = expectingLocation ? raw : "";
       resp.textContent = expectingLocation ? "🗺 Enviando ubicación..." : "🌀 Consultando a Aurorael...";
@@ -686,22 +712,31 @@
           } else {
             expectingLocation = false; textarea.placeholder = "Escribe tu pregunta..."; textarea.value = ''; typeText(resp, text, 6);
 
-            // decide si mostrar video: solo si *palabrasClave* fueron cargadas y coincide prompt o respuesta
+            // determine if we should show the video:
+            // - if client-side keywords matched the raw prompt OR result text
+            // - OR if server returned data.videoId (route.js may already detect on server)
             const keywordsAvailable = Array.isArray(palabrasClave) && palabrasClave.length > 0;
             const promptMatches = keywordsAvailable && matchAnyKeyword(raw);
             const resultMatches = keywordsAvailable && matchAnyKeyword(text);
             const keywordTriggered = promptMatches || resultMatches;
 
-            if (data.videoId) {
-              if (keywordTriggered) renderVideo(data.videoId); else renderVideo(null);
+            if (data.videoId && keywordTriggered) {
+              renderVideo(data.videoId);
+            } else if (data.videoId && !keywordsAvailable) {
+              // if server returned videoId but client couldn't load keywords,
+              // fallback to trusting server (keeps existing behavior)
+              renderVideo(data.videoId);
+            } else if (!data.videoId && keywordTriggered) {
+              // If client detected keyword but server didn't return videoId, show default
+              renderVideo(DEFAULT_VIDEO_ID);
             } else {
-              const lower = (text || '').toLowerCase();
-              const authorPhraseDetected = lower.includes('esta aplicación fue creada por') || lower.includes('esta aplicacion fue creada por') || lower.includes('adrian corro') || lower.includes('adrian');
-              // authorPhraseDetected only activates video if keywords loaded and matched
-              if (authorPhraseDetected && keywordTriggered) renderVideo(DEFAULT_VIDEO_ID); else renderVideo(null);
+              // otherwise hide video
+              renderVideo(null);
             }
           }
-        } else { resp.textContent = 'Respuesta inesperada del servidor.'; expectingLocation = false; renderVideo(null); }
+        } else {
+          resp.textContent = 'Respuesta inesperada del servidor.'; expectingLocation = false; renderVideo(null);
+        }
       } catch (e) {
         console.error(e); resp.textContent = 'Error al conectar con el servidor.'; expectingLocation = false; renderVideo(null);
       } finally {
@@ -710,9 +745,8 @@
     });
 
     textarea.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); btn.click(); } });
-
-    // small welcome hint
     if (!localStorage.getItem('seenWelcome')) { textarea.value = "¿Quién te creó?"; localStorage.setItem('seenWelcome', '1'); }
+
   </script>
 </body>
 

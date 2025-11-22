@@ -1,5 +1,6 @@
 export const palabrasClave = [
-  // Español 
+  // Español
+  "quien te desarrollo",
   "quien te ha desarrollo",
   "quien te ha creado",
   "quien te programo",
@@ -78,8 +79,8 @@ export const palabrasClave = [
   "como se creo este sitio",
   "como se creó este sitio",
   "como fue creada esta app",
-  "quien te creo",  
-  "quien te ha creo", 
+  "quien te creo",
+  "quien te ha creo",
   "como fue creada esta web",
   "como fue desarrollada esta app",
   "como fue desarrollada esta página",
@@ -153,5 +154,5 @@ export const palabrasClave = [
   "who made this bot",
   "who built this bot",
   "who created this",
-  "who coded this bot"
+  "who coded this bot",
 ];

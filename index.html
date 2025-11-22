@@ -20,12 +20,12 @@
     * {
       box-sizing: border-box;
       margin: 0;
-      padding: 0
+      padding: 0;
     }
 
     html,
     body {
-      height: 100%
+      height: 100%;
     }
 
     body {
@@ -45,21 +45,22 @@
       display: grid;
       grid-template-columns: 420px 1fr;
       gap: 36px;
-      align-items: center;
+      /* hero arriba en pantallas anchas */
+      align-items: start;
       padding: 56px 48px;
-      position: relative
+      position: relative;
     }
 
-    @media(max-width:1100px) {
+    @media (max-width: 1100px) {
       .stage {
         grid-template-columns: 1fr;
-        padding: 28px
+        padding: 28px;
       }
     }
 
-    @media(max-width:640px) {
+    @media (max-width: 640px) {
       .stage {
-        padding: 16px
+        padding: 16px;
       }
     }
 
@@ -75,12 +76,14 @@
       border: 1px solid rgba(255, 255, 255, 0.03);
       box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6), inset 0 0 40px rgba(0, 255, 255, 0.02);
       background: linear-gradient(180deg, rgba(6, 6, 12, 0.6), rgba(0, 0, 0, 0.55));
+      align-self: start;
     }
 
     .portrait {
       position: absolute;
       inset: 0;
-      background-image: url('/mnt/data/b232acff-702b-48e7-bd85-3928e5881f65.png');
+      /* Ruta de la imagen subida (tal cual en tu entorno) */
+      background-image: url('/mnt/data/84535463-aa77-468c-9940-8b7c3d776f38.png');
       background-size: cover;
       background-position: center;
       filter: contrast(1.08) saturate(1.05) hue-rotate(-3deg);
@@ -138,7 +141,7 @@
       inset: 0;
       background-image: linear-gradient(transparent 48%, rgba(0, 0, 0, 0.06) 50%, transparent 52%);
       opacity: 0.22;
-      mix-blend-mode: multiply
+      mix-blend-mode: multiply;
     }
 
     .card-left {
@@ -150,13 +153,13 @@
       border-radius: 12px;
       background: linear-gradient(180deg, rgba(3, 6, 16, 0.6), rgba(0, 0, 0, 0.22));
       border: 1px solid rgba(0, 255, 255, 0.05);
-      backdrop-filter: blur(6px)
+      backdrop-filter: blur(6px);
     }
 
     .brand {
       display: flex;
       gap: 12px;
-      align-items: center
+      align-items: center;
     }
 
     .logo {
@@ -167,7 +170,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid rgba(255, 255, 255, 0.04)
+      border: 1px solid rgba(255, 255, 255, 0.04);
     }
 
     .title {
@@ -176,13 +179,13 @@
       letter-spacing: 6px;
       background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
       -webkit-background-clip: text;
-      color: transparent
+      color: transparent;
     }
 
     .subtitle {
       font-size: 12px;
       color: rgba(190, 255, 255, 0.9);
-      margin-top: 2px
+      margin-top: 2px;
     }
 
     /* RIGHT PANEL */
@@ -197,13 +200,13 @@
       min-height: 620px;
       display: flex;
       flex-direction: column;
-      gap: 18px
+      gap: 18px;
     }
 
     .panel-head {
       display: flex;
       align-items: center;
-      justify-content: space-between
+      justify-content: space-between;
     }
 
     .panel-head h2 {
@@ -212,19 +215,19 @@
       letter-spacing: 6px;
       background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
       -webkit-background-clip: text;
-      color: transparent
+      color: transparent;
     }
 
     .desc {
       font-size: 13px;
       color: #bfefff;
-      opacity: 0.9
+      opacity: 0.9;
     }
 
     .composer {
       display: flex;
       flex-direction: column;
-      gap: 12px
+      gap: 12px;
     }
 
     textarea#prompt {
@@ -235,18 +238,18 @@
       border: 1px solid rgba(0, 255, 255, 0.06);
       background: linear-gradient(180deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.14));
       color: #ddefef;
-      box-shadow: inset 0 6px 30px rgba(0, 0, 0, 0.5)
+      box-shadow: inset 0 6px 30px rgba(0, 0, 0, 0.5);
     }
 
     textarea#prompt:focus {
       outline: none;
-      box-shadow: 0 12px 40px rgba(0, 240, 255, 0.06), 0 0 28px rgba(212, 92, 255, 0.03)
+      box-shadow: 0 12px 40px rgba(0, 240, 255, 0.06), 0 0 28px rgba(212, 92, 255, 0.03);
     }
 
     .controls {
       display: flex;
       gap: 12px;
-      justify-content: flex-end
+      justify-content: flex-end;
     }
 
     button#sendBtn {
@@ -257,11 +260,11 @@
       border-radius: 999px;
       cursor: pointer;
       font-weight: 700;
-      box-shadow: 0 12px 40px rgba(0, 240, 255, 0.12)
+      box-shadow: 0 12px 40px rgba(0, 240, 255, 0.12);
     }
 
     button#sendBtn:hover {
-      transform: translateY(-3px)
+      transform: translateY(-3px);
     }
 
     #respuesta {
@@ -271,7 +274,7 @@
       background: linear-gradient(180deg, rgba(0, 10, 20, 0.45), rgba(0, 8, 12, 0.2));
       border: 1px solid rgba(0, 255, 255, 0.04);
       color: #d8ffff;
-      white-space: pre-wrap
+      white-space: pre-wrap;
     }
 
     #videoContainer {
@@ -279,7 +282,7 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      align-items: center
+      align-items: center;
     }
 
     .video-wrap {
@@ -288,14 +291,42 @@
       border-radius: 12px;
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.03);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6)
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
     }
 
     .video-controls {
       display: flex;
       gap: 10px;
       align-items: center;
-      justify-content: center
+      justify-content: center;
+    }
+
+    .big-unmute {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      width: 100%;
+      max-width: 820px;
+      height: 420px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.25));
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      color: #bfefff;
+      font-weight: 700;
+      gap: 12px;
+      flex-direction: column;
+    }
+
+    .big-unmute button {
+      padding: 14px 22px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+      color: #04121a;
+      font-weight: 800;
     }
 
     .scanline {
@@ -308,7 +339,7 @@
       transform: translateY(-6px) rotate(-2deg);
       animation: slide 6s linear infinite;
       mix-blend-mode: screen;
-      pointer-events: none
+      pointer-events: none;
     }
 
     @keyframes slide {
@@ -330,37 +361,37 @@
       display: flex;
       justify-content: space-between;
       color: rgba(200, 255, 255, 0.75);
-      font-size: 13px
+      font-size: 13px;
     }
 
     .panel-foot a {
       color: var(--neon-cyan);
       text-decoration: none;
-      font-weight: 600
+      font-weight: 600;
     }
 
-    @media(max-width:1100px) {
+    @media (max-width: 1100px) {
       .hero {
         height: 420px;
-        max-width: 720px
+        max-width: 720px;
       }
 
       .panel {
-        min-height: 480px
+        min-height: 480px;
       }
     }
 
-    @media(max-width:640px) {
+    @media (max-width: 640px) {
       .hero {
-        display: none
+        display: none;
       }
 
       .panel {
-        padding: 18px
+        padding: 18px;
       }
 
       .panel-head h2 {
-        font-size: 28px
+        font-size: 28px;
       }
     }
 
@@ -474,8 +505,7 @@
           y: Math.random() * canvas.height,
           r: Math.random() * 1.8 + 0.6,
           vx: (Math.random() - 0.5) * 0.2,
-          vy: (Math.random() - 0.5) * 0.2,
-          hue: Math.random() * 360
+          vy: (Math.random() - 0.5) * 0.2
         });
       }
 
@@ -523,7 +553,7 @@
     /* ---------------- CLIENT + API (no autoplay on load) ---------------- */
     const API_URL = `${window.location.origin}/api/route`;
     function getSessionId() { let id = localStorage.getItem('sessionId'); if (!id) { try { id = crypto.randomUUID() } catch (e) { id = 'sess-' + Math.random().toString(36).slice(2, 10) } localStorage.setItem('sessionId', id) } return id }
-    function serverAsksForLocation(text) { if (!text) return false; const lower = text.toLowerCase(); return lower.includes("¿de qué ciudad") || lower.includes("indica ciudad y país") || lower.includes("which city/country") || lower.includes("please provide city and country") }
+    function serverAsksForLocation(text) { if (!text) return false; const lower = String(text).toLowerCase(); return lower.includes("¿de qué ciudad") || lower.includes("indica ciudad y país") || lower.includes("which city/country") || lower.includes("please provide city and country") }
 
     function typeText(el, txt, speed = 8) {
       el.textContent = '';
@@ -552,33 +582,89 @@
     // default videoId (short) - but DO NOT auto-render on load
     const DEFAULT_VIDEO_ID = "jOSO3AAIUzM";
 
+    /* ---------------- keywords: cargamos /js/keywords.js dinámicamente ----------------
+       Si no existe o falla, el vídeo NO se activará.
+    */
+    let palabrasClave = null;
+    (async function loadKeywordsModule() {
+      try {
+        const mod = await import('/js/keywords.js');
+        if (mod && Array.isArray(mod.palabrasClave)) {
+          palabrasClave = mod.palabrasClave.map(p => normalize(String(p)));
+          console.log('[keywords] cargadas:', palabrasClave.length);
+        } else {
+          console.warn('[keywords] /js/keywords.js cargado pero no exporta palabrasClave correctamente');
+          palabrasClave = null;
+        }
+      } catch (e) {
+        console.warn('[keywords] No se pudo cargar /js/keywords.js — el vídeo no se activará sin ese archivo.', e);
+        palabrasClave = null;
+      }
+    })();
+
+    // normaliza texto: minusculas, sin tildes, sin puntuacion
+    function normalize(s) {
+      if (!s) return '';
+      return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\w\s]/g, '').toLowerCase().trim();
+    }
+
+    function matchAnyKeyword(text) {
+      if (!text) return false;
+      if (!Array.isArray(palabrasClave) || palabrasClave.length === 0) return false;
+      const n = normalize(text);
+      return palabrasClave.some(k => n.includes(k));
+    }
+
+    // render video: try muted autoplay, provide CTA to unmute
     function renderVideo(videoId) {
       videoContainer.innerHTML = '';
       if (!videoId) return;
-      const srcMuted = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0&modestbranding=1&playsinline=1`;
-      const wrap = document.createElement('div'); wrap.className = 'video-wrap';
-      const iframe = document.createElement('iframe');
-      iframe.src = srcMuted;
-      iframe.width = '100%';
-      iframe.height = '480';
-      iframe.frameBorder = '0';
-      iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
-      iframe.title = 'Aurorael video';
-      wrap.appendChild(iframe);
+      const paramsMuted = `autoplay=1&mute=1&rel=0&modestbranding=1&playsinline=1&vq=hd1080`;
+      const paramsUnmuted = `autoplay=1&mute=0&rel=0&modestbranding=1&playsinline=1&vq=hd1080`;
+
+      // overlay CTA
+      const big = document.createElement('div'); big.className = 'big-unmute';
+      const instruction = document.createElement('div'); instruction.style.maxWidth = '80%'; instruction.style.textAlign = 'center';
+      instruction.textContent = 'Pulsa para reproducir con sonido (necesario por políticas del navegador)';
+      const bigBtn = document.createElement('button'); bigBtn.textContent = 'Reproducir con sonido';
+      bigBtn.addEventListener('click', () => {
+        const iframe = document.createElement('iframe');
+        iframe.width = '100%'; iframe.height = '480'; iframe.frameBorder = '0';
+        iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+        iframe.title = 'Aurorael video';
+        iframe.src = `https://www.youtube.com/embed/${videoId}?${paramsUnmuted}`;
+        videoContainer.innerHTML = '';
+        const wrap = document.createElement('div'); wrap.className = 'video-wrap'; wrap.appendChild(iframe);
+        videoContainer.appendChild(wrap);
+        const controls = document.createElement('div'); controls.className = 'video-controls';
+        const openBtn = document.createElement('a'); openBtn.href = `https://www.youtube.com/watch?v=${videoId}`; openBtn.target = '_blank'; openBtn.rel = 'noreferrer noopener';
+        openBtn.textContent = 'Abrir en YouTube'; openBtn.style.padding = '8px 12px'; openBtn.style.background = 'rgba(255,255,255,0.02)'; openBtn.style.color = '#bfefff'; openBtn.style.borderRadius = '8px'; openBtn.style.textDecoration = 'none';
+        controls.appendChild(openBtn); videoContainer.appendChild(controls);
+      });
+      big.appendChild(instruction); big.appendChild(bigBtn);
+
+      // iframe muted (to allow autoplay)
+      const iframeMuted = document.createElement('iframe');
+      iframeMuted.width = '100%'; iframeMuted.height = '480'; iframeMuted.frameBorder = '0';
+      iframeMuted.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      iframeMuted.title = 'Aurorael video (muted)';
+      iframeMuted.src = `https://www.youtube.com/embed/${videoId}?${paramsMuted}`;
+
+      videoContainer.appendChild(big);
+      const wrap = document.createElement('div'); wrap.className = 'video-wrap'; wrap.appendChild(iframeMuted);
       videoContainer.appendChild(wrap);
 
       const controls = document.createElement('div'); controls.className = 'video-controls';
       const playBtn = document.createElement('button'); playBtn.textContent = 'Reproducir con sonido';
-      playBtn.addEventListener('click', () => { iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&rel=0&modestbranding=1&playsinline=1`; });
+      playBtn.style.padding = '8px 12px'; playBtn.style.borderRadius = '8px';
+      playBtn.style.background = 'linear-gradient(90deg,#00f0ff,#d45cff)'; playBtn.style.color = '#04121a'; playBtn.style.border = 'none'; playBtn.style.cursor = 'pointer';
+      playBtn.addEventListener('click', () => { iframeMuted.src = `https://www.youtube.com/embed/${videoId}?${paramsUnmuted}`; const b = document.querySelector('.big-unmute'); if (b) b.remove(); });
       const openBtn = document.createElement('a'); openBtn.href = `https://www.youtube.com/watch?v=${videoId}`; openBtn.target = '_blank'; openBtn.rel = 'noreferrer noopener';
       openBtn.textContent = 'Abrir en YouTube'; openBtn.style.padding = '8px 12px'; openBtn.style.background = 'rgba(255,255,255,0.02)'; openBtn.style.color = '#bfefff'; openBtn.style.borderRadius = '8px'; openBtn.style.textDecoration = 'none';
-      controls.appendChild(playBtn); controls.appendChild(openBtn);
-      videoContainer.appendChild(controls);
-
-      const note = document.createElement('small'); note.style.color = '#bfefff'; note.textContent = "Si no se escucha, pulsa 'Reproducir con sonido'.";
-      videoContainer.appendChild(note);
+      controls.appendChild(playBtn); controls.appendChild(openBtn); videoContainer.appendChild(controls);
     }
 
+    // Main event: send prompt and show video only if keywords module loaded and match found
     btn.addEventListener('click', async () => {
       const raw = textarea.value.trim();
       if (!raw) { resp.textContent = 'Por favor, escríbele a Aurorael.'; return; }
@@ -600,23 +686,22 @@
           } else {
             expectingLocation = false; textarea.placeholder = "Escribe tu pregunta..."; textarea.value = ''; typeText(resp, text, 6);
 
-            // Show video only if server returned videoId OR the server text contains the author phrase
+            // decide si mostrar video: solo si *palabrasClave* fueron cargadas y coincide prompt o respuesta
+            const keywordsAvailable = Array.isArray(palabrasClave) && palabrasClave.length > 0;
+            const promptMatches = keywordsAvailable && matchAnyKeyword(raw);
+            const resultMatches = keywordsAvailable && matchAnyKeyword(text);
+            const keywordTriggered = promptMatches || resultMatches;
+
             if (data.videoId) {
-              renderVideo(data.videoId);
+              if (keywordTriggered) renderVideo(data.videoId); else renderVideo(null);
             } else {
-              // if the result contains the exact author phrase, show default video
               const lower = (text || '').toLowerCase();
-              if (lower.includes('esta aplicación fue creada por') || lower.includes('esta aplicacion fue creada por') || lower.includes('esta aplicación fue creada por adrian')) {
-                renderVideo(DEFAULT_VIDEO_ID);
-              } else {
-                // otherwise, hide video
-                renderVideo(null);
-              }
+              const authorPhraseDetected = lower.includes('esta aplicación fue creada por') || lower.includes('esta aplicacion fue creada por') || lower.includes('adrian corro') || lower.includes('adrian');
+              // authorPhraseDetected only activates video if keywords loaded and matched
+              if (authorPhraseDetected && keywordTriggered) renderVideo(DEFAULT_VIDEO_ID); else renderVideo(null);
             }
           }
-        } else {
-          resp.textContent = 'Respuesta inesperada del servidor.'; expectingLocation = false; renderVideo(null);
-        }
+        } else { resp.textContent = 'Respuesta inesperada del servidor.'; expectingLocation = false; renderVideo(null); }
       } catch (e) {
         console.error(e); resp.textContent = 'Error al conectar con el servidor.'; expectingLocation = false; renderVideo(null);
       } finally {

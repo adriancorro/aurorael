@@ -11,11 +11,10 @@
     @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&family=Exo+2:wght@300;400;600;700&display=swap");
 
     :root {
-      --bg-dark: #030218;
+      --bg-dark: #05030b;
       --neon-cyan: #00f0ff;
       --neon-magenta: #d45cff;
       --accent: #7ee7ff;
-      --glass: rgba(255, 255, 255, 0.04);
     }
 
     * {
@@ -31,13 +30,12 @@
 
     body {
       font-family: "Exo 2", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-      background:
-        radial-gradient(800px 400px at 10% 10%, rgba(12, 6, 40, 0.6), transparent 12%),
-        radial-gradient(700px 360px at 92% 90%, rgba(60, 0, 80, 0.45), transparent 12%),
-        var(--bg-dark);
       color: #dffaff;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      background: radial-gradient(1000px 500px at 12% 18%, rgba(6, 8, 20, 0.85), transparent 12%),
+        radial-gradient(800px 420px at 90% 82%, rgba(50, 0, 80, 0.6), transparent 12%),
+        var(--bg-dark);
       overflow-x: hidden;
     }
 
@@ -55,7 +53,7 @@
     @media(max-width:1100px) {
       .stage {
         grid-template-columns: 1fr;
-        padding: 28px;
+        padding: 28px
       }
     }
 
@@ -65,7 +63,7 @@
       }
     }
 
-    /* HERO (left) */
+    /* HERO LEFT */
     .hero {
       position: relative;
       width: 100%;
@@ -76,24 +74,23 @@
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.03);
       box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6), inset 0 0 40px rgba(0, 255, 255, 0.02);
-      background: linear-gradient(180deg, rgba(6, 6, 12, 0.5), rgba(0, 0, 0, 0.55));
+      background: linear-gradient(180deg, rgba(6, 6, 12, 0.6), rgba(0, 0, 0, 0.55));
     }
 
-    /* NEW hero portrait (uses uploaded image) */
     .portrait {
       position: absolute;
       inset: 0;
       background-image: url('/mnt/data/b232acff-702b-48e7-bd85-3928e5881f65.png');
       background-size: cover;
       background-position: center;
-      transform-origin: center;
-      filter: contrast(1.08) saturate(1.05) hue-rotate(-2deg);
+      filter: contrast(1.08) saturate(1.05) hue-rotate(-3deg);
       animation: portraitFloat 6s ease-in-out infinite;
+      transform-origin: center;
     }
 
     @keyframes portraitFloat {
       0% {
-        transform: translateY(0px) scale(1)
+        transform: translateY(0) scale(1)
       }
 
       50% {
@@ -101,11 +98,10 @@
       }
 
       100% {
-        transform: translateY(0px) scale(1)
+        transform: translateY(0) scale(1)
       }
     }
 
-    /* neon arch behind portrait */
     .hero::before {
       content: "";
       position: absolute;
@@ -114,10 +110,10 @@
       width: 116%;
       height: 116%;
       border-radius: 50%;
-      background: conic-gradient(from 180deg at 50% 50%, rgba(0, 240, 255, 0.12), rgba(212, 92, 255, 0.08), transparent 50%);
-      filter: blur(36px) saturate(1.15);
+      background: conic-gradient(from 200deg at 50% 50%, rgba(0, 240, 255, 0.12), rgba(212, 92, 255, 0.08), transparent 55%);
+      filter: blur(36px) saturate(1.1);
       mix-blend-mode: screen;
-      opacity: 0.95;
+      opacity: 0.98;
       transform: scale(1.02);
       animation: arcPulse 12s ease-in-out infinite;
     }
@@ -136,29 +132,25 @@
       }
     }
 
-    /* subtle glows and horizontal scanlines */
     .hero::after {
       content: "";
       position: absolute;
       inset: 0;
       background-image: linear-gradient(transparent 48%, rgba(0, 0, 0, 0.06) 50%, transparent 52%);
       opacity: 0.22;
-      mix-blend-mode: multiply;
+      mix-blend-mode: multiply
     }
 
-    /* left overlay card */
     .card-left {
       position: absolute;
-      left: 18px;
-      bottom: 20px;
-      width: calc(100% - 36px);
-      padding: 16px;
+      left: 16px;
+      bottom: 18px;
+      width: calc(100% - 32px);
+      padding: 14px;
       border-radius: 12px;
-      background: linear-gradient(180deg, rgba(3, 6, 16, 0.6), rgba(0, 0, 0, 0.25));
+      background: linear-gradient(180deg, rgba(3, 6, 16, 0.6), rgba(0, 0, 0, 0.22));
       border: 1px solid rgba(0, 255, 255, 0.05);
-      backdrop-filter: blur(6px);
-      color: #cfeffd;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(6px)
     }
 
     .brand {
@@ -189,10 +181,11 @@
 
     .subtitle {
       font-size: 12px;
-      color: rgba(190, 255, 255, 0.9)
+      color: rgba(190, 255, 255, 0.9);
+      margin-top: 2px
     }
 
-    /* Right panel */
+    /* RIGHT PANEL */
     .panel {
       position: relative;
       padding: 34px;
@@ -228,7 +221,6 @@
       opacity: 0.9
     }
 
-    /* input */
     .composer {
       display: flex;
       flex-direction: column;
@@ -282,7 +274,6 @@
       white-space: pre-wrap
     }
 
-    /* video */
     #videoContainer {
       margin-top: 10px;
       display: flex;
@@ -307,7 +298,6 @@
       justify-content: center
     }
 
-    /* scanline */
     .scanline {
       position: absolute;
       left: -30%;
@@ -335,7 +325,6 @@
       }
     }
 
-    /* footer */
     .panel-foot {
       margin-top: auto;
       display: flex;
@@ -350,7 +339,6 @@
       font-weight: 600
     }
 
-    /* responsive tweaks */
     @media(max-width:1100px) {
       .hero {
         height: 420px;
@@ -375,11 +363,23 @@
         font-size: 28px
       }
     }
+
+    /* PARTICLES canvas overlay styles */
+    #particlesCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      opacity: 0.9;
+    }
   </style>
 </head>
 
 <body>
-  <div class="stage">
+  <canvas id="particlesCanvas" aria-hidden="true"></canvas>
+
+  <div class="stage" style="z-index:1">
     <!-- LEFT HERO -->
     <div>
       <div class="hero" role="img" aria-label="Aurorael portrait">
@@ -388,7 +388,6 @@
         <div class="card-left" role="region" aria-label="Aurorael info">
           <div class="brand">
             <div class="logo" aria-hidden="true">
-              <!-- neon emblem -->
               <svg viewBox="0 0 24 24" width="36" height="36" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <linearGradient id="g2" x1="0" x2="1">
@@ -423,7 +422,7 @@
       </div>
     </div>
 
-    <!-- RIGHT PANEL: interactivo -->
+    <!-- RIGHT PANEL -->
     <section class="panel" aria-labelledby="panel-title">
       <div class="scanline" aria-hidden="true"></div>
 
@@ -448,7 +447,7 @@
 
         <div id="respuesta" role="status" aria-live="polite"></div>
 
-        <!-- video container -->
+        <!-- video container (invisible until renderVideo called) -->
         <div id="videoContainer" aria-live="polite" aria-atomic="true"></div>
 
         <div class="panel-foot">
@@ -460,40 +459,75 @@
   </div>
 
   <script>
-    /* Ambient animated strokes canvas (subtle background motion) */
+    /* ---------------- PARTICLES BACKGROUND ---------------- */
     (function () {
-      const canvas = document.createElement('canvas');
-      canvas.style.position = 'fixed'; canvas.style.inset = '0'; canvas.style.zIndex = '0'; canvas.style.pointerEvents = 'none';
-      document.body.appendChild(canvas);
+      const canvas = document.getElementById('particlesCanvas');
       const ctx = canvas.getContext('2d');
       function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
       resize(); window.addEventListener('resize', resize);
-      const parts = [];
-      for (let i = 0; i < 120; i++) { parts.push({ x: Math.random() * innerWidth, y: Math.random() * innerHeight, l: Math.random() * 140 + 40, a: Math.random() * 0.25 + 0.02, vx: (Math.random() - 0.5) * 0.15, vy: (Math.random() - 0.5) * 0.15 }) }
-      (function loop() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        parts.forEach(p => {
-          p.x += p.vx; p.y += p.vy;
-          if (p.x < -200) p.x = canvas.width + 200; if (p.x > canvas.width + 200) p.x = -200;
-          if (p.y < -200) p.y = canvas.height + 200; if (p.y > canvas.height + 200) p.y = -200;
-          ctx.beginPath();
-          ctx.moveTo(p.x, p.y);
-          ctx.lineTo(p.x + Math.cos(p.x + p.y) * p.l, p.y + Math.sin(p.x - p.y) * p.l);
-          ctx.strokeStyle = `rgba(0,240,255,${p.a})`;
-          ctx.lineWidth = 0.8;
-          ctx.stroke();
+
+      const particles = [];
+      const N = Math.round((innerWidth * innerHeight) / 80000); // scale with screen
+      for (let i = 0; i < N; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 1.8 + 0.6,
+          vx: (Math.random() - 0.5) * 0.2,
+          vy: (Math.random() - 0.5) * 0.2,
+          hue: Math.random() * 360
         });
-        requestAnimationFrame(loop);
-      })();
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // soft radial glow center
+        const g = ctx.createRadialGradient(canvas.width * 0.5, canvas.height * 0.3, 50, canvas.width * 0.5, canvas.height * 0.3, Math.max(canvas.width, canvas.height));
+        g.addColorStop(0, 'rgba(0,12,30,0)');
+        g.addColorStop(1, 'rgba(0,0,0,0.6)');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // draw particles
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          if (p.x < -50) p.x = canvas.width + 50;
+          if (p.x > canvas.width + 50) p.x = -50;
+          if (p.y < -50) p.y = canvas.height + 50;
+          if (p.y > canvas.height + 50) p.y = -50;
+
+          // glow
+          ctx.beginPath();
+          const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 8);
+          grad.addColorStop(0, `rgba(0,240,255,0.12)`);
+          grad.addColorStop(0.6, `rgba(212,92,255,0.04)`);
+          grad.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = grad;
+          ctx.arc(p.x, p.y, p.r * 8, 0, Math.PI * 2);
+          ctx.fill();
+
+          // core dot
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(180,255,255,0.95)`;
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        requestAnimationFrame(draw);
+      }
+      draw();
     })();
 
-    /* Client + API code (adaptado) */
+
+    /* ---------------- CLIENT + API (no autoplay on load) ---------------- */
     const API_URL = `${window.location.origin}/api/route`;
     function getSessionId() { let id = localStorage.getItem('sessionId'); if (!id) { try { id = crypto.randomUUID() } catch (e) { id = 'sess-' + Math.random().toString(36).slice(2, 10) } localStorage.setItem('sessionId', id) } return id }
     function serverAsksForLocation(text) { if (!text) return false; const lower = text.toLowerCase(); return lower.includes("¿de qué ciudad") || lower.includes("indica ciudad y país") || lower.includes("which city/country") || lower.includes("please provide city and country") }
 
     function typeText(el, txt, speed = 8) {
-      el.textContent = ''; let i = 0;
+      el.textContent = '';
+      let i = 0;
       const cursor = document.createElement('span'); cursor.style.display = 'inline-block'; cursor.style.width = '8px'; cursor.style.height = '1em';
       cursor.style.background = 'linear-gradient(90deg,#00f0ff,#d45cff)'; cursor.style.marginLeft = '6px'; cursor.style.borderRadius = '2px';
       el.appendChild(cursor);
@@ -502,8 +536,10 @@
 
     async function sendPrompt(prompt, location = "") {
       const sessionId = getSessionId();
-      const tz = (Intl && Intl.DateTimeFormat) ? Intl.DateTimeFormat().resolvedOptions().timeZone : '';
-      const body = { prompt, sessionId }; if (location) body.location = location; if (tz) body.timeZone = tz;
+      const tz = (Intl && Intl.DateTimeFormat) ? Intl.DateTimeFormat().resolvedOptions().timeZone : "";
+      const body = { prompt, sessionId };
+      if (location) body.location = location;
+      if (tz) body.timeZone = tz;
       const res = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
       const data = await res.json().catch(() => ({ error: 'No JSON response from server' }));
       if (data.sessionId) localStorage.setItem('sessionId', data.sessionId);
@@ -513,7 +549,7 @@
     const btn = document.getElementById('sendBtn'), resp = document.getElementById('respuesta'), textarea = document.getElementById('prompt'), videoContainer = document.getElementById('videoContainer');
     let expectingLocation = false;
 
-    // default videoId (your Short) - will load muted autoplay
+    // default videoId (short) - but DO NOT auto-render on load
     const DEFAULT_VIDEO_ID = "jOSO3AAIUzM";
 
     function renderVideo(videoId) {
@@ -521,8 +557,13 @@
       if (!videoId) return;
       const srcMuted = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0&modestbranding=1&playsinline=1`;
       const wrap = document.createElement('div'); wrap.className = 'video-wrap';
-      const iframe = document.createElement('iframe'); iframe.src = srcMuted; iframe.width = '100%'; iframe.height = '480';
-      iframe.allow = 'autoplay; encrypted-media; picture-in-picture'; iframe.frameBorder = '0'; iframe.setAttribute('title', 'Aurorael video');
+      const iframe = document.createElement('iframe');
+      iframe.src = srcMuted;
+      iframe.width = '100%';
+      iframe.height = '480';
+      iframe.frameBorder = '0';
+      iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
+      iframe.title = 'Aurorael video';
       wrap.appendChild(iframe);
       videoContainer.appendChild(wrap);
 
@@ -538,38 +579,54 @@
       videoContainer.appendChild(note);
     }
 
-    // auto-load default short muted on page load
-    document.addEventListener('DOMContentLoaded', () => { renderVideo(DEFAULT_VIDEO_ID); });
-
     btn.addEventListener('click', async () => {
       const raw = textarea.value.trim();
       if (!raw) { resp.textContent = 'Por favor, escríbele a Aurorael.'; return; }
+
       const locationToSend = expectingLocation ? raw : "";
       resp.textContent = expectingLocation ? "🗺 Enviando ubicación..." : "🌀 Consultando a Aurorael...";
       textarea.disabled = true; btn.disabled = true;
+
       try {
         const data = await sendPrompt(raw, locationToSend);
+
         if (data.error) {
-          resp.textContent = data.error; expectingLocation = false; textarea.placeholder = 'Escribe tu pregunta...'; renderVideo(DEFAULT_VIDEO_ID);
+          resp.textContent = data.error; expectingLocation = false; textarea.placeholder = "Escribe tu pregunta..."; renderVideo(null);
         } else if (data.result) {
           const text = data.result;
+
           if (serverAsksForLocation(text)) {
-            expectingLocation = true; textarea.placeholder = 'Indica ciudad, país (ej. Madrid, España)'; textarea.value = ''; typeText(resp, text, 8); renderVideo(null);
+            expectingLocation = true; textarea.placeholder = "Indica ciudad, país (ej. Madrid, España)"; textarea.value = ''; typeText(resp, text, 8); renderVideo(null);
           } else {
-            expectingLocation = false; textarea.placeholder = 'Escribe tu pregunta...'; textarea.value = ''; typeText(resp, text, 6);
-            // if backend returns videoId use it, otherwise keep default
-            if (data.videoId) renderVideo(data.videoId); else renderVideo(DEFAULT_VIDEO_ID);
+            expectingLocation = false; textarea.placeholder = "Escribe tu pregunta..."; textarea.value = ''; typeText(resp, text, 6);
+
+            // Show video only if server returned videoId OR the server text contains the author phrase
+            if (data.videoId) {
+              renderVideo(data.videoId);
+            } else {
+              // if the result contains the exact author phrase, show default video
+              const lower = (text || '').toLowerCase();
+              if (lower.includes('esta aplicación fue creada por') || lower.includes('esta aplicacion fue creada por') || lower.includes('esta aplicación fue creada por adrian')) {
+                renderVideo(DEFAULT_VIDEO_ID);
+              } else {
+                // otherwise, hide video
+                renderVideo(null);
+              }
+            }
           }
         } else {
-          resp.textContent = 'Respuesta inesperada del servidor.'; expectingLocation = false; renderVideo(DEFAULT_VIDEO_ID);
+          resp.textContent = 'Respuesta inesperada del servidor.'; expectingLocation = false; renderVideo(null);
         }
       } catch (e) {
-        console.error(e); resp.textContent = 'Error al conectar con el servidor.'; expectingLocation = false; renderVideo(DEFAULT_VIDEO_ID);
-      } finally { textarea.disabled = false; btn.disabled = false; }
+        console.error(e); resp.textContent = 'Error al conectar con el servidor.'; expectingLocation = false; renderVideo(null);
+      } finally {
+        textarea.disabled = false; btn.disabled = false;
+      }
     });
 
     textarea.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); btn.click(); } });
 
+    // small welcome hint
     if (!localStorage.getItem('seenWelcome')) { textarea.value = "¿Quién te creó?"; localStorage.setItem('seenWelcome', '1'); }
   </script>
 </body>

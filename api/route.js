@@ -2,9 +2,7 @@ import OpenAI from "openai";
 
 //  Lista de dominios permitidos
 const allowedOrigins = [
-  "https://www.hegel2052.com",
-  "https://hegel2052.com",
-  "https://hegel2052.vercel.app",
+  "https://aurorael.vercel.app",
   "http://localhost:3000",
   "http://127.0.0.1:3000",
 ];

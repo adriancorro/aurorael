@@ -1,8 +1,8 @@
 import { Analytics } from "@vercel/analytics/react";
 
 export const metadata = {
-  title: "Hegel 2052",
-  description: "Reflexión dialéctica del espíritu moderno",
+  title: "Aurorael",
+  description: "Artificial intelligence with critical thinking",
 };
 
 export default function RootLayout({ children }) {

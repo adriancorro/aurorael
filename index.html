@@ -2,60 +2,26 @@
 <html lang="es">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hegel 2052</title>
   <link rel="icon" type="image/png" sizes="512x512" href="img/hegel.png" />
-  <!-- Vercel Web Analytics -->
+  <!-- Vercel Web Analytics (si no lo usas, puedes quitarlo) -->
   <script defer src="https://vercel.com/analytics/script.js"></script>
   <script>
     window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
   </script>
   <script defer src="/_vercel/insights/script.js"></script>
+
   <style>
     @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&family=Exo+2:wght@400;600&display=swap");
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: "Exo 2", sans-serif; color: #ccfaff; background: #000; overflow-x: hidden; }
+    body { display: flex; flex-direction: column; justify-content: space-between; position: relative; }
 
-    html,
-    body {
-      height: 100%;
-      font-family: "Exo 2", sans-serif;
-      color: #ccfaff;
-      background: #000;
-      overflow-x: hidden
-    }
-
-    body {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
-    }
-
-    /* === Capa de fondo === */
-    .bg-layer {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      overflow: hidden;
-    }
-
-    canvas {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      pointer-events: none;
-    }
+    .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden; }
+    canvas { position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; }
 
     body::before {
       content: "";
@@ -66,164 +32,51 @@
       animation: bgShift 10s ease-in-out infinite alternate;
       z-index: 0;
     }
-
-    @keyframes bgShift {
-      0% {
-        background-position: 0% 50%;
-      }
-
-      100% {
-        background-position: 100% 50%;
-      }
-    }
+    @keyframes bgShift { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 
     main {
-      flex: 1;
-      z-index: 5;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 60px 20px;
+      flex: 1; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 60px 20px;
     }
 
-    .hegel-face {
-      width: 260px;
-      height: 260px;
-      margin-bottom: 25px;
-      stroke: url(#neonGradient);
-      stroke-width: 1.2;
-      fill: none;
-      stroke-linecap: round;
-      stroke-linejoin: bevel;
-      filter: drop-shadow(0 0 25px #00ffff);
-      animation: facePulse 6s ease-in-out infinite alternate;
-    }
+    .hegel-face { width: 260px; height: 260px; margin-bottom: 25px; stroke: url(#neonGradient); stroke-width: 1.2; fill: none;
+      stroke-linecap: round; stroke-linejoin: bevel; filter: drop-shadow(0 0 25px #00ffff); animation: facePulse 6s ease-in-out infinite alternate; }
+    @keyframes facePulse { from { filter: drop-shadow(0 0 20px #00ffff); } to { filter: drop-shadow(0 0 40px #8b5cff); } }
 
-    @keyframes facePulse {
-      from {
-        filter: drop-shadow(0 0 20px #00ffff);
-      }
-
-      to {
-        filter: drop-shadow(0 0 40px #8b5cff);
-      }
-    }
-
-    h1 {
-      font-family: "Orbitron", sans-serif;
-      font-size: 3em;
-      text-transform: uppercase;
-      letter-spacing: 6px;
-      background: linear-gradient(90deg, #00ffff, #8b5cff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 25px #00ffff, 0 0 45px #8b5cff;
-      margin-bottom: 10px;
-    }
-
-    p {
-      font-size: 1.1em;
-      color: #aeeaff;
-      text-shadow: 0 0 10px #00ffff;
-      margin-bottom: 30px;
-    }
+    h1 { font-family: "Orbitron", sans-serif; font-size: 3em; text-transform: uppercase; letter-spacing: 6px;
+      background: linear-gradient(90deg, #00ffff, #8b5cff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 25px #00ffff, 0 0 45px #8b5cff; margin-bottom: 10px; }
+    p { font-size: 1.1em; color: #aeeaff; text-shadow: 0 0 10px #00ffff; margin-bottom: 30px; }
 
     textarea {
-      width: 90%;
-      max-width: 550px;
-      height: 130px;
-      background: rgba(0, 255, 255, 0.05);
-      border: 1px solid #00ffff;
-      color: #aafaff;
-      font-size: 16px;
-      border-radius: 12px;
-      padding: 12px;
-      resize: none;
-      outline: none;
-      backdrop-filter: blur(8px);
+      width: 90%; max-width: 550px; height: 130px; background: rgba(0, 255, 255, 0.05); border: 1px solid #00ffff;
+      color: #aafaff; font-size: 16px; border-radius: 12px; padding: 12px; resize: none; outline: none; backdrop-filter: blur(8px);
       box-shadow: 0 0 15px #0077ff33;
     }
 
     button {
-      margin-top: 25px;
-      background: linear-gradient(90deg, #00ffff, #8b5cff);
-      color: #000;
-      border: none;
-      font-weight: bold;
-      font-size: 17px;
-      padding: 14px 40px;
-      border-radius: 50px;
-      cursor: pointer;
-      box-shadow: 0 0 25px #00ffff;
-      transition: all .3s ease-in-out;
+      margin-top: 25px; background: linear-gradient(90deg, #00ffff, #8b5cff); color: #000; border: none; font-weight: bold;
+      font-size: 17px; padding: 14px 40px; border-radius: 50px; cursor: pointer; box-shadow: 0 0 25px #00ffff; transition: all .3s ease-in-out;
     }
-
-    button:hover {
-      transform: scale(1.08);
-      box-shadow: 0 0 40px #9b59ff;
-    }
+    button:hover { transform: scale(1.08); box-shadow: 0 0 40px #9b59ff; }
 
     #respuesta {
-      margin-top: 35px;
-      width: 90%;
-      max-width: 650px;
-      background: rgba(0, 15, 25, .55);
-      border-radius: 14px;
-      padding: 25px;
-      border: 1px solid #00ffff80;
-      white-space: pre-wrap;
-      overflow-wrap: break-word;
-      word-break: break-word;
-      font-size: 1.1em;
-      text-shadow: 0 0 12px #00ffff99;
-      min-height: 120px;
-      line-height: 1.6;
-      box-shadow: 0 0 25px #00336688 inset;
-      color: #d8ffff;
+      margin-top: 35px; width: 90%; max-width: 650px; background: rgba(0, 15, 25, .55); border-radius: 14px; padding: 25px;
+      border: 1px solid #00ffff80; white-space: pre-wrap; overflow-wrap: break-word; word-break: break-word; font-size: 1.1em;
+      text-shadow: 0 0 12px #00ffff99; min-height: 120px; line-height: 1.6; box-shadow: 0 0 25px #00336688 inset; color: #d8ffff;
     }
 
-    /* === Footer sobre todo === */
     footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      z-index: 9999;
-      /* 🔥 la capa más alta */
-      text-align: center;
-      padding: 20px 0;
-      background: rgba(0, 10, 25, 0.9);
-      border-top: 1px solid rgba(0, 255, 255, 0.3);
-      box-shadow: 0 -4px 25px rgba(0, 255, 255, 0.1);
-      font-size: 0.8em;
-      color: #c8ffff;
-      text-shadow: 0 0 8px #00ffff;
+      position: fixed; bottom: 0; left: 0; width: 100%; z-index: 9999; text-align: center; padding: 20px 0;
+      background: rgba(0, 10, 25, 0.9); border-top: 1px solid rgba(0, 255, 255, 0.3); box-shadow: 0 -4px 25px rgba(0, 255, 255, 0.1);
+      font-size: 0.8em; color: #c8ffff; text-shadow: 0 0 8px #00ffff;
     }
-
-    footer a {
-      color: #00ffff;
-      text-decoration: none;
-      font-weight: bold;
-      text-shadow: 0 0 10px #00ffff;
-      transition: .3s;
-    }
-
-    footer a:hover {
-      color: #9b59ff;
-      text-shadow: 0 0 15px #9b59ff;
-    }
+    footer a { color: #00ffff; text-decoration: none; font-weight: bold; text-shadow: 0 0 10px #00ffff; transition: .3s; }
+    footer a:hover { color: #9b59ff; text-shadow: 0 0 15px #9b59ff; }
 
     @media(max-width:600px) {
-      h1 {
-        font-size: 2em;
-      }
-
-      .hegel-face {
-        width: 160px;
-        height: 160px;
-      }
+      h1 { font-size: 2em; }
+      .hegel-face { width: 160px; height: 160px; }
     }
   </style>
 </head>
@@ -253,63 +106,174 @@
     <h1>HEGEL 2052</h1>
     <p>Reflexión dialéctica del espíritu moderno</p>
 
-    <textarea id="prompt" placeholder=" :D 88 "></textarea>
+    <textarea id="prompt" placeholder="Escribe tu pregunta (p.ej. ¿Cuánto frío hace?)"></textarea>
     <button id="sendBtn">Consultar</button>
     <div id="respuesta"></div>
   </main>
 
   <footer>
-    Created and maintained by <a href="https://github.com/adriancorro" target="_blank">Adrian **GitHub**</a>
+    Created and maintained by <a href="https://github.com/adriancorro" target="_blank" rel="noopener">Adrian GitHub</a>
     and <strong>OpenAI</strong>
   </footer>
 
   <script>
-    /* === Fondo dinámico === */
+    /* ================= Fondo dinámico (sin cambios significativos) ================= */
     const bg = document.getElementById("bg"), ctx = bg.getContext("2d");
     function resize() { bg.width = innerWidth; bg.height = innerHeight; } window.addEventListener("resize", resize); resize();
     const lines = Array.from({ length: 25 }, () => ({ x: Math.random() * innerWidth, y: Math.random() * innerHeight, len: Math.random() * 80 + 40, ang: Math.random() * Math.PI * 2, spd: Math.random() * 0.3 + 0.15, alp: Math.random() * 0.3 + 0.1 }));
     function animateLines() {
       ctx.fillStyle = "rgba(0,0,20,0.25)"; ctx.fillRect(0, 0, bg.width, bg.height);
       lines.forEach(l => {
-        l.x += Math.cos(l.ang) * l.spd; l.y += Math.sin(l.ang) * l.spd; if (l.x < 0 || l.x > innerWidth || l.y < 0 || l.y > innerHeight) { l.x = Math.random() * innerWidth; l.y = Math.random() * innerHeight; }
-        const x2 = l.x + Math.cos(l.ang) * l.len, y2 = l.y + Math.sin(l.ang) * l.len; ctx.strokeStyle = `rgba(0,255,255,${l.alp})`; ctx.beginPath(); ctx.moveTo(l.x, l.y); ctx.lineTo(x2, y2); ctx.stroke();
+        l.x += Math.cos(l.ang) * l.spd; l.y += Math.sin(l.ang) * l.spd;
+        if (l.x < 0 || l.x > innerWidth || l.y < 0 || l.y > innerHeight) { l.x = Math.random() * innerWidth; l.y = Math.random() * innerHeight; }
+        const x2 = l.x + Math.cos(l.ang) * l.len, y2 = l.y + Math.sin(l.ang) * l.len;
+        ctx.strokeStyle = `rgba(0,255,255,${l.alp})`; ctx.beginPath(); ctx.moveTo(l.x, l.y); ctx.lineTo(x2, y2); ctx.stroke();
       });
       requestAnimationFrame(animateLines);
     } animateLines();
 
-    /* === Meteorito 777 === */
     const meteor = document.getElementById("meteor"), mctx = meteor.getContext("2d");
     function resizeM() { meteor.width = innerWidth; meteor.height = innerHeight; } resizeM(); window.addEventListener("resize", resizeM);
     function drawMeteor() {
-      const sx = -50, sy = Math.random() * innerHeight * 0.4, ex = innerWidth + 100, ey = sy + 200; const dur = 2000, start = performance.now(), trail = [];
+      const sx = -50, sy = Math.random() * innerHeight * 0.4, ex = innerWidth + 100, ey = sy + 200;
+      const dur = 2000, start = performance.now(), trail = [];
       function step(t) {
-        const p = (t - start) / dur; if (p > 1) return; const x = sx + (ex - sx) * p, y = sy + (ey - sy) * p; trail.push({ x, y }); if (trail.length > 8) trail.shift();
+        const p = (t - start) / dur; if (p > 1) return;
+        const x = sx + (ex - sx) * p, y = sy + (ey - sy) * p; trail.push({ x, y }); if (trail.length > 8) trail.shift();
         mctx.clearRect(0, 0, meteor.width, meteor.height);
-        for (let i = 0; i < trail.length; i++) { const a = i / trail.length; mctx.beginPath(); mctx.arc(trail[i].x, trail[i].y, 2, 0, Math.PI * 2); mctx.fillStyle = `rgba(0,255,255,${a})`; mctx.shadowColor = "#8b5cff"; mctx.shadowBlur = 15; mctx.fill(); }
-        mctx.font = "bold 28px Orbitron"; mctx.fillStyle = "rgba(0,255,255,0.95)"; mctx.shadowColor = "#8b5cff"; mctx.shadowBlur = 25; mctx.fillText("777", x, y);
+        for (let i = 0; i < trail.length; i++) {
+          const a = i / trail.length; mctx.beginPath(); mctx.arc(trail[i].x, trail[i].y, 2, 0, Math.PI * 2);
+          mctx.fillStyle = `rgba(0,255,255,${a})`; mctx.shadowColor = "#8b5cff"; mctx.shadowBlur = 15; mctx.fill();
+        }
+        mctx.font = "bold 28px Orbitron"; mctx.fillStyle = "rgba(0,255,255,0.95)"; mctx.shadowColor = "#8b5cff"; mctx.shadowBlur = 25;
+        mctx.fillText("777", x, y);
         requestAnimationFrame(step);
       }
       requestAnimationFrame(step);
     }
     setInterval(drawMeteor, 7000);
 
-    /* === Comunicación con API === */
-    const btn = document.getElementById("sendBtn"), resp = document.getElementById("respuesta");
-    function typeText(el, txt, speed = 10, glow = false) {
-      el.innerHTML = ""; let i = 0; const cur = document.createElement("span"); cur.style.display = "inline-block"; cur.style.width = "8px"; cur.style.height = "1em"; cur.style.background = "#00ffff"; cur.style.marginLeft = "3px"; el.appendChild(cur);
-      const int = setInterval(() => { el.insertBefore(document.createTextNode(txt.charAt(i)), cur); i++; if (i >= txt.length) { clearInterval(int); cur.remove(); } }, speed);
+    /* =================== Lógica cliente + interacción con servidor =================== */
+
+    // API URL (funciona tanto en local como en producción)
+    const API_URL = `${window.location.origin}/api/route`;
+
+    // Obtener/crear sessionId guardado en localStorage
+    function getSessionId() {
+      let id = localStorage.getItem("sessionId");
+      if (!id) {
+        // crypto.randomUUID es soportado por navegadores modernos
+        try {
+          id = crypto.randomUUID();
+        } catch (e) {
+          // fallback simple
+          id = 'sess-' + Math.random().toString(36).slice(2, 10);
+        }
+        localStorage.setItem("sessionId", id);
+      }
+      return id;
     }
+
+    // Escribiendo texto con efecto
+    function typeText(el, txt, speed = 8) {
+      el.innerHTML = "";
+      let i = 0;
+      const cur = document.createElement("span");
+      cur.style.display = "inline-block"; cur.style.width = "8px"; cur.style.height = "1em";
+      cur.style.background = "#00ffff"; cur.style.marginLeft = "3px";
+      el.appendChild(cur);
+      const int = setInterval(() => {
+        el.insertBefore(document.createTextNode(txt.charAt(i)), cur);
+        i++;
+        if (i >= txt.length) { clearInterval(int); cur.remove(); }
+      }, speed);
+    }
+
+    // Control de estado (si servidor pidió location)
+    let expectingLocation = false;
+
+    // Función principal que realiza la petición al servidor
+    async function sendPromptToServer(prompt, location = "") {
+      const sessionId = getSessionId();
+      const body = { prompt, sessionId };
+      if (location) body.location = location;
+
+      const r = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      // Esperamos JSON
+      const data = await r.json().catch(() => ({ error: "No JSON response" }));
+      // Si el servidor devuelve sessionId, sincronizamos (aunque normalmente client ya lo tiene)
+      if (data.sessionId) localStorage.setItem("sessionId", data.sessionId);
+      return data;
+    }
+
+    // Elementos UI
+    const btn = document.getElementById("sendBtn"), resp = document.getElementById("respuesta"), textarea = document.getElementById("prompt");
+
+    // Evento click
     btn.addEventListener("click", async () => {
-      const prompt = document.getElementById("prompt").value.trim(); if (!prompt) { resp.textContent = "Por favor, escribele a Hegel."; return; }
-      resp.textContent = "🌀 Consultando a Hegel...";
+      const raw = textarea.value.trim();
+      if (!raw) { resp.textContent = "Por favor, escríbele a Hegel."; return; }
+
+      // Si estamos esperando location, la mandamos como campo location y un prompt mínimo
+      const locationToSend = expectingLocation ? raw : "";
+
+      // Mostrar estado
+      resp.textContent = "🌀 Consultando a 010110001110 ...";
+      textarea.disabled = true;
+      btn.disabled = true;
+
       try {
-        let API_URL = window.location.hostname.includes("localhost") ? "http://localhost:3000/api/route" : window.location.hostname.includes("https://aurorael.vercel.app") ? "https://aurorael.vercel.app/api/route" : "https://aurorael.vercel.app/api/route";
-        const r = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt }) });
-        const data = await r.json();
-        if (data.result) { const fromKeywords = data.fromKeywords === true || data.result.includes("Adrián Corro"); fromKeywords ? typeText(resp, data.result, 10, true) : resp.textContent = data.result; }
-        else resp.textContent = "Error en la respuesta del servidor.";
-      } catch (e) { console.error(e); resp.textContent = "Error al conectar con el servidor."; }
+        const data = await sendPromptToServer(raw, locationToSend);
+
+        // Manejar errores del servidor
+        if (data.error) {
+          resp.textContent = data.error;
+          expectingLocation = false;
+          textarea.placeholder = "Escribe tu pregunta...";
+        } else if (data.result) {
+          const text = data.result;
+
+          // Si el servidor pidió ubicación (texto con la pregunta específica), lo detectamos y ponemos flag
+          const asksForLocationEs = text.toLowerCase().includes("¿de qué ciudad") || text.toLowerCase().includes("indica ciudad y país");
+          const asksForLocationEn = text.toLowerCase().includes("which city/country") || text.toLowerCase().includes("please provide city and country");
+          if (asksForLocationEs || asksForLocationEn) {
+            expectingLocation = true;
+            textarea.placeholder = "Indica ciudad, país (ej. Madrid, España)";
+            textarea.value = "";
+            typeText(resp, text, 8);
+          } else {
+            // respuesta normal del servidor (muestra con typing)
+            expectingLocation = false;
+            textarea.placeholder = "Escribe tu pregunta...";
+            textarea.value = "";
+            typeText(resp, text, 6);
+          }
+        } else {
+          resp.textContent = "Respuesta inesperada del servidor.";
+          expectingLocation = false;
+        }
+      } catch (e) {
+        console.error(e);
+        resp.textContent = "Error al conectar con el servidor.";
+        expectingLocation = false;
+      } finally {
+        textarea.disabled = false;
+        btn.disabled = false;
+      }
     });
+
+    // Enter para enviar (Shift+Enter -> newline)
+    textarea.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        btn.click();
+      }
+    });
+
   </script>
 </body>
 

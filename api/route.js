@@ -323,7 +323,7 @@ export async function POST(req) {
     try {
       // --- PON AQUI TU VIDEO_ID: la parte después de '?v=' en la URL de YouTube ---
       // Ejemplo: for https://www.youtube.com/watch?v=dQw4w9WgXcQ -> videoId = "dQw4w9WgXcQ"
-      const DEFAULT_VIDEO_ID = "7lv6iP0DSSRt3RJv"; // <-- reemplaza esto por tu videoId
+      const DEFAULT_VIDEO_ID = "jOSO3AAIUzM"; // <-- reemplaza esto por tu videoId
 
       // Cargar palabras clave dinámicamente (tu archivo no se cambia)
       const { palabrasClave } = await import(`${process.cwd()}/api/keywords.js`);

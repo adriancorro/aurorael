@@ -303,7 +303,7 @@
       const prompt = document.getElementById("prompt").value.trim(); if (!prompt) { resp.textContent = "Por favor, escribele a Hegel."; return; }
       resp.textContent = "🌀 Consultando a Hegel...";
       try {
-        let API_URL = window.location.hostname.includes("localhost") ? "http://localhost:3000/api/route" : window.location.hostname.includes("hegel2052.com") ? "https://www.hegel2052.com/api/route" : "https://hegel2052.vercel.app/api/route";
+        let API_URL = window.location.hostname.includes("localhost") ? "http://localhost:3000/api/route" : window.location.hostname.includes("https://aurorael.vercel.app") ? "https://aurorael.vercel.app/api/route" : "https://hegel2052.vercel.app/api/route";
         const r = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt }) });
         const data = await r.json();
         if (data.result) { const fromKeywords = data.fromKeywords === true || data.result.includes("Adrián Corro"); fromKeywords ? typeText(resp, data.result, 10, true) : resp.textContent = data.result; }

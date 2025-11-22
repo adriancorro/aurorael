@@ -321,10 +321,12 @@ export async function POST(req) {
 
     // ------------------- BLOQUE: detección de palabras clave (autor) -------------------
     try {
-      // Cargar palabras clave dinámicamente
-      const { palabrasClave } = await import(
-        `${process.cwd()}/api/keywords.js`
-      );
+      // --- PON AQUI TU VIDEO_ID: la parte después de '?v=' en la URL de YouTube ---
+      // Ejemplo: for https://www.youtube.com/watch?v=dQw4w9WgXcQ -> videoId = "dQw4w9WgXcQ"
+      const DEFAULT_VIDEO_ID = "zfzIxp4gtLI"; // <-- reemplaza esto por tu videoId
+
+      // Cargar palabras clave dinámicamente (tu archivo no se cambia)
+      const { palabrasClave } = await import(`${process.cwd()}/api/keywords.js`);
 
       // Normalizar todas las palabras clave
       const normalizedKeywords = (palabrasClave || []).map((f) =>
@@ -340,10 +342,14 @@ export async function POST(req) {
       if (preguntaAutor) {
         const respuestaAutor =
           "Esta aplicación fue creada por **Adrian Corro** ([GitHub](https://github.com/adriancorro))";
-        return new Response(JSON.stringify({ result: respuestaAutor }), {
-          status: 200,
-          headers: headersBase,
-        });
+        // Devuelve texto + videoId (siempre DEFAULT_VIDEO_ID)
+        return new Response(
+          JSON.stringify({ result: respuestaAutor, videoId: DEFAULT_VIDEO_ID }),
+          {
+            status: 200,
+            headers: headersBase,
+          }
+        );
       }
     } catch (e) {
       // Si falla la carga de keywords no bloqueamos la app; continuamos normalmente

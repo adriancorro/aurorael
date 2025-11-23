@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>AURORAEL</title>
   <link rel="icon" type="image/png" sizes="512x512" href="img/hegel.png" />
   <meta name="description" content="Aurorael — AI futurista. Pregúntale cosas y experimenta la interfaz cyberpunk." />
@@ -26,6 +26,11 @@
     html,
     body {
       height: 100%;
+      overflow-x: hidden;
+      overscroll-behavior-x: none;
+      touch-action: pan-y;
+      -webkit-tap-highlight-color: transparent;
+      background-color: var(--bg-dark);
     }
 
     body {
@@ -37,22 +42,21 @@
         radial-gradient(1000px 500px at 12% 18%, rgba(6, 8, 20, 0.85), transparent 12%),
         radial-gradient(800px 420px at 90% 82%, rgba(50, 0, 80, 0.6), transparent 12%),
         var(--bg-dark);
-      overflow-x: hidden;
     }
 
-    /* Layout */
     .stage {
       min-height: 100vh;
       display: grid;
       grid-template-columns: 420px 1fr;
       gap: 36px;
       align-items: start;
-      /* clave: alinear al top */
       padding: 56px 48px;
       position: relative;
+      max-width: 100%;
+      overflow-x: hidden;
+      z-index: 1;
     }
 
-    /* asegurar que la celda izquierda no centre su contenido */
     .stage>div:first-child {
       display: flex;
       align-items: flex-start;
@@ -71,14 +75,11 @@
       }
     }
 
-    /* HERO LEFT */
     .hero {
       position: relative;
       width: 100%;
       max-width: 420px;
       height: 680px;
-      margin: 0;
-      /* quitar centrado vertical */
       border-radius: 18px;
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.03);
@@ -90,13 +91,15 @@
     .portrait {
       position: absolute;
       inset: 0;
-      /* ruta a la imagen subida */
-      background-image: url('/aurorael/img/aurorael.PNG');
+      /* Ajusta la ruta si tu imagen está en otra carpeta */
+      background-image: url('img/aurorael.png');
+      background-repeat: no-repeat;
       background-size: cover;
       background-position: center;
       filter: contrast(1.08) saturate(1.05) hue-rotate(-3deg);
       animation: portraitFloat 6s ease-in-out infinite;
       transform-origin: center;
+      z-index: 1;
     }
 
     @keyframes portraitFloat {
@@ -116,17 +119,19 @@
     .hero::before {
       content: "";
       position: absolute;
-      left: -8%;
+      left: 50%;
       top: -6%;
-      width: 116%;
+      width: 120%;
       height: 116%;
       border-radius: 50%;
       background: conic-gradient(from 200deg at 50% 50%, rgba(0, 240, 255, 0.12), rgba(212, 92, 255, 0.08), transparent 55%);
       filter: blur(36px) saturate(1.1);
       mix-blend-mode: screen;
       opacity: 0.98;
-      transform: scale(1.02);
+      transform: translateX(-50%) scale(1.02);
       animation: arcPulse 12s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
     }
 
     @keyframes arcPulse {
@@ -150,21 +155,20 @@
       background-image: linear-gradient(transparent 48%, rgba(0, 0, 0, 0.06) 50%, transparent 52%);
       opacity: 0.22;
       mix-blend-mode: multiply;
+      z-index: 2;
     }
 
-    /* card-left ahora aparece en TOP */
     .card-left {
       position: absolute;
       left: 16px;
       top: 18px;
-      /* movido arriba */
-      bottom: auto;
       width: calc(100% - 32px);
       padding: 14px;
       border-radius: 12px;
       background: linear-gradient(180deg, rgba(3, 6, 16, 0.6), rgba(0, 0, 0, 0.22));
       border: 1px solid rgba(0, 255, 255, 0.05);
       backdrop-filter: blur(6px);
+      z-index: 3;
     }
 
     .brand {
@@ -177,11 +181,9 @@
       width: 56px;
       height: 56px;
       border-radius: 10px;
-      background: linear-gradient(135deg, rgba(0, 240, 255, 0.12), rgba(212, 92, 255, 0.12));
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid rgba(255, 255, 255, 0.04)
     }
 
     .title {
@@ -190,16 +192,15 @@
       letter-spacing: 6px;
       background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
       -webkit-background-clip: text;
-      color: transparent
+      color: transparent;
     }
 
     .subtitle {
       font-size: 12px;
       color: rgba(190, 255, 255, 0.9);
-      margin-top: 2px
+      margin-top: 2px;
     }
 
-    /* RIGHT PANEL */
     .panel {
       position: relative;
       padding: 34px;
@@ -212,6 +213,8 @@
       display: flex;
       flex-direction: column;
       gap: 18px;
+      z-index: 2;
+      overflow: hidden;
     }
 
     .panel-head {
@@ -232,7 +235,7 @@
     .desc {
       font-size: 13px;
       color: #bfefff;
-      opacity: 0.9
+      opacity: 0.9;
     }
 
     .composer {
@@ -249,12 +252,13 @@
       border: 1px solid rgba(0, 255, 255, 0.06);
       background: linear-gradient(180deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.14));
       color: #ddefef;
-      box-shadow: inset 0 6px 30px rgba(0, 0, 0, 0.5)
+      box-shadow: inset 0 6px 30px rgba(0, 0, 0, 0.5);
+      resize: vertical;
     }
 
     textarea#prompt:focus {
       outline: none;
-      box-shadow: 0 12px 40px rgba(0, 240, 255, 0.06), 0 0 28px rgba(212, 92, 255, 0.03)
+      box-shadow: 0 12px 40px rgba(0, 240, 255, 0.06), 0 0 28px rgba(212, 92, 255, 0.03);
     }
 
     .controls {
@@ -271,11 +275,11 @@
       border-radius: 999px;
       cursor: pointer;
       font-weight: 700;
-      box-shadow: 0 12px 40px rgba(0, 240, 255, 0.12)
+      box-shadow: 0 12px 40px rgba(0, 240, 255, 0.12);
     }
 
     button#sendBtn:hover {
-      transform: translateY(-3px)
+      transform: translateY(-3px);
     }
 
     #respuesta {
@@ -286,6 +290,7 @@
       border: 1px solid rgba(0, 255, 255, 0.04);
       color: #d8ffff;
       white-space: pre-wrap;
+      overflow: auto;
     }
 
     #videoContainer {
@@ -302,7 +307,38 @@
       border-radius: 12px;
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.03);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6)
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+
+    .big-unmute {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.32), rgba(0, 0, 0, 0.28));
+      z-index: 10;
+      padding: 12px;
+    }
+
+    .big-unmute .big-text {
+      max-width: 80%;
+      text-align: center;
+      color: #bfefff;
+      font-weight: 700;
+    }
+
+    .big-unmute button {
+      padding: 12px 18px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+      color: #04121a;
+      font-weight: 700;
     }
 
     .video-controls {
@@ -312,32 +348,12 @@
       justify-content: center;
     }
 
-    .big-unmute {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      width: 100%;
-      max-width: 820px;
-      height: 420px;
-      border-radius: 12px;
-      background: linear-gradient(180deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.25));
-      border: 1px solid rgba(255, 255, 255, 0.03);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    .video-controls a {
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.02);
       color: #bfefff;
-      font-weight: 700;
-      gap: 12px;
-      flex-direction: column;
-    }
-
-    .big-unmute button {
-      padding: 14px 22px;
-      border-radius: 12px;
-      border: none;
-      cursor: pointer;
-      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
-      color: #04121a;
-      font-weight: 800
+      border-radius: 8px;
+      text-decoration: none;
     }
 
     .scanline {
@@ -404,9 +420,12 @@
       .panel-head h2 {
         font-size: 28px;
       }
+
+      .video-wrap {
+        max-width: 100%;
+      }
     }
 
-    /* PARTICLES canvas overlay styles */
     #particlesCanvas {
       position: fixed;
       inset: 0;
@@ -414,6 +433,10 @@
       pointer-events: none;
       mix-blend-mode: screen;
       opacity: 0.9;
+      width: 100vw;
+      height: 100vh;
+      min-width: 100vw;
+      min-height: 100vh;
     }
   </style>
 </head>
@@ -445,17 +468,19 @@
             </div>
             <div>
               <div class="title">A U R O R A E L</div>
-              <div class="subtitle">AI • 777 • Synthetic Philosophy</div>
+              <div class="subtitle">AI Philosophy </div>
             </div>
           </div>
 
           <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
             <div
               style="padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.02);border:1px solid rgba(0,255,255,0.04);font-size:12px;color:#bfefff">
-              Philosophy Core</div>
+              Philosophy Core
+            </div>
             <div
               style="padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.02);border:1px solid rgba(0,255,255,0.04);font-size:12px;color:#bfefff">
-              Cyber-Critical Theory</div>
+              Cyber-Critical Theory
+            </div>
           </div>
 
           <p style="margin-top:10px;color:#bfefff;font-size:13px;line-height:1.4">Aurorael es una inteligencia
@@ -476,15 +501,15 @@
         <div style="display:flex;gap:8px;align-items:center;">
           <div
             style="font-size:12px;color:#aef6ff;border-radius:8px;padding:6px 10px;background:rgba(255,255,255,0.02);border:1px solid rgba(0,255,255,0.04);">
-            Online</div>
+            Online
+          </div>
         </div>
       </div>
 
       <div class="composer" role="form" aria-label="Composer">
-        <textarea id="prompt" placeholder="Any topic you’d like to talk about? "
-          aria-label="Pregunta"></textarea>
+        <textarea id="prompt" placeholder="Any topic you’d like to talk about? " aria-label="Pregunta"></textarea>
         <div class="controls">
-          <button id="sendBtn" aria-label="Consultar">CONSULTAR</button>
+          <button id="sendBtn" aria-label="Consultar">Ask</button>
         </div>
 
         <div id="respuesta" role="status" aria-live="polite"></div>
@@ -494,7 +519,7 @@
 
         <div class="panel-foot">
           <div>Created by <a href="https://github.com/adriancorro" target="_blank" rel="noopener">Adrian</a></div>
-          <div style="opacity:0.9">Powered by <strong>The Frankfurt School of Critical Theory/strong></div>
+          <div style="opacity:0.9">Powered by <strong>The Frankfurt School of Critical Theory</strong></div>
         </div>
       </div>
     </section>
@@ -509,7 +534,7 @@
       resize(); window.addEventListener('resize', resize);
 
       const particles = [];
-      const N = Math.round((innerWidth * innerHeight) / 80000);
+      const N = Math.max(40, Math.round((innerWidth * innerHeight) / 80000));
       for (let i = 0; i < N; i++) {
         particles.push({
           x: Math.random() * canvas.width,
@@ -585,10 +610,16 @@
       const body = { prompt, sessionId };
       if (location) body.location = location;
       if (tz) body.timeZone = tz;
-      const res = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-      const data = await res.json().catch(() => ({ error: 'No JSON response from server' }));
-      if (data.sessionId) localStorage.setItem('sessionId', data.sessionId);
-      return data;
+      try {
+        const res = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        if (!res.ok) return { error: `Server returned ${res.status}` };
+        const data = await res.json().catch(() => ({ error: 'No JSON response from server' }));
+        if (data.sessionId) localStorage.setItem('sessionId', data.sessionId);
+        return data;
+      } catch (e) {
+        console.error('fetch error', e);
+        return { error: 'Error connecting to server' };
+      }
     }
 
     const btn = document.getElementById('sendBtn'),
@@ -598,7 +629,7 @@
     let expectingLocation = false;
     const DEFAULT_VIDEO_ID = "jOSO3AAIUzM";
 
-    /* Robust keywords loader: import('/js/keywords.js') or fetch fallback */
+    /* Robust keywords loader */
     let palabrasClave = null;
     let keywordsReady = (async function loadKeywordsModule() {
       try {
@@ -608,7 +639,6 @@
           console.log('[keywords] cargadas (import):', palabrasClave.length);
           return true;
         }
-        console.warn('[keywords] import ok but palabrasClave not found');
       } catch (e) {
         console.warn('[keywords] import failed, trying fetch...', e);
         try {
@@ -626,7 +656,6 @@
               return true;
             }
           }
-          console.warn('[keywords] fetch succeeded but failed to parse palabrasClave.');
         } catch (e2) {
           console.warn('[keywords] fetch parse failed', e2);
         }
@@ -636,12 +665,7 @@
     })();
 
     function normalize(s) { if (!s) return ''; return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\w\s]/g, '').toLowerCase().trim(); }
-    function matchAnyKeyword(text) {
-      if (!text) return false;
-      if (!Array.isArray(palabrasClave) || palabrasClave.length === 0) return false;
-      const n = normalize(text);
-      return palabrasClave.some(k => n.includes(k));
-    }
+    function matchAnyKeyword(text) { if (!text) return false; if (!Array.isArray(palabrasClave) || palabrasClave.length === 0) return false; const n = normalize(text); return palabrasClave.some(k => n.includes(k)); }
 
     function renderVideo(videoId) {
       videoContainer.innerHTML = '';
@@ -649,50 +673,65 @@
       const paramsMuted = `autoplay=1&mute=1&rel=0&modestbranding=1&playsinline=1&vq=hd1080`;
       const paramsUnmuted = `autoplay=1&mute=0&rel=0&modestbranding=1&playsinline=1&vq=hd1080`;
 
-      // overlay CTA
-      const big = document.createElement('div'); big.className = 'big-unmute';
-      const instr = document.createElement('div'); instr.style.maxWidth = '80%'; instr.style.textAlign = 'center';
-      instr.textContent = 'Pulsa para reproducir con sonido (necesario por políticas del navegador)';
-      const bigBtn = document.createElement('button'); bigBtn.textContent = 'Reproducir con sonido';
-      bigBtn.addEventListener('click', () => {
-        const iframe = document.createElement('iframe');
-        iframe.width = '100%'; iframe.height = '480'; iframe.frameBorder = '0';
-        iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
-        iframe.title = 'Aurorael video';
-        iframe.src = `https://www.youtube.com/embed/${videoId}?${paramsUnmuted}`;
-        videoContainer.innerHTML = '';
-        const wrap = document.createElement('div'); wrap.className = 'video-wrap'; wrap.appendChild(iframe); videoContainer.appendChild(wrap);
-        const controls = document.createElement('div'); controls.className = 'video-controls';
-        const openBtn = document.createElement('a'); openBtn.href = `https://www.youtube.com/watch?v=${videoId}`; openBtn.target = '_blank'; openBtn.rel = 'noreferrer noopener'; openBtn.textContent = 'Abrir en YouTube'; openBtn.style.padding = '8px 12px'; openBtn.style.background = 'rgba(255,255,255,0.02)'; openBtn.style.color = '#bfefff'; openBtn.style.borderRadius = '8px'; openBtn.style.textDecoration = 'none';
-        controls.appendChild(openBtn); videoContainer.appendChild(controls);
-      });
-      big.appendChild(instr); big.appendChild(bigBtn);
+      // responsive 16:9 wrap
+      const wrap = document.createElement('div');
+      wrap.className = 'video-wrap';
+      wrap.style.position = 'relative';
+      wrap.style.paddingTop = '56.25%';
+      wrap.style.height = '0';
+      wrap.style.overflow = 'hidden';
 
       const iframeMuted = document.createElement('iframe');
-      iframeMuted.width = '100%'; iframeMuted.height = '480'; iframeMuted.frameBorder = '0';
+      iframeMuted.frameBorder = '0';
       iframeMuted.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
       iframeMuted.title = 'Aurorael video (muted)';
+      iframeMuted.allowFullscreen = true;
       iframeMuted.src = `https://www.youtube.com/embed/${videoId}?${paramsMuted}`;
+      iframeMuted.style.position = 'absolute';
+      iframeMuted.style.left = '0';
+      iframeMuted.style.top = '0';
+      iframeMuted.style.width = '100%';
+      iframeMuted.style.height = '100%';
+      iframeMuted.style.border = '0';
 
-      // show overlay + muted iframe initially (user can unmute)
-      videoContainer.appendChild(big);
-      const wrap = document.createElement('div'); wrap.className = 'video-wrap'; wrap.appendChild(iframeMuted); videoContainer.appendChild(wrap);
+      wrap.appendChild(iframeMuted);
 
-      const controls = document.createElement('div'); controls.className = 'video-controls';
-      const playBtn = document.createElement('button'); playBtn.textContent = 'Reproducir con sonido';
-      playBtn.style.padding = '8px 12px'; playBtn.style.borderRadius = '8px';
-      playBtn.style.background = 'linear-gradient(90deg,#00f0ff,#d45cff)'; playBtn.style.color = '#04121a'; playBtn.style.border = 'none'; playBtn.style.cursor = 'pointer';
-      playBtn.addEventListener('click', () => { iframeMuted.src = `https://www.youtube.com/embed/${videoId}?${paramsUnmuted}`; const b = document.querySelector('.big-unmute'); if (b) b.remove(); });
-      const openBtn = document.createElement('a'); openBtn.href = `https://www.youtube.com/watch?v=${videoId}`; openBtn.target = '_blank'; openBtn.rel = 'noreferrer noopener'; openBtn.textContent = 'Abrir en YouTube'; openBtn.style.padding = '8px 12px'; openBtn.style.background = 'rgba(255,255,255,0.02)'; openBtn.style.color = '#bfefff'; openBtn.style.borderRadius = '8px'; openBtn.style.textDecoration = 'none';
-      controls.appendChild(playBtn); controls.appendChild(openBtn); videoContainer.appendChild(controls);
+      // overlay inside wrap — single play control
+      const overlay = document.createElement('div');
+      overlay.className = 'big-unmute';
+      const instr = document.createElement('div');
+      instr.className = 'big-text';
+      instr.textContent = 'Pulsa para reproducir con sonido (necesario por políticas del navegador)';
+      const bigBtn = document.createElement('button');
+      bigBtn.textContent = 'Reproducir con sonido';
+      bigBtn.addEventListener('click', () => {
+        iframeMuted.src = `https://www.youtube.com/embed/${videoId}?${paramsUnmuted}`;
+        overlay.remove();
+      });
+
+      overlay.appendChild(instr);
+      overlay.appendChild(bigBtn);
+      wrap.appendChild(overlay);
+
+      videoContainer.appendChild(wrap);
+
+      // single control under video: only "Abrir en YouTube"
+      const controls = document.createElement('div');
+      controls.className = 'video-controls';
+      const openBtn = document.createElement('a');
+      openBtn.href = `https://www.youtube.com/watch?v=${videoId}`;
+      openBtn.target = '_blank';
+      openBtn.rel = 'noreferrer noopener';
+      openBtn.textContent = 'Abrir en YouTube';
+      controls.appendChild(openBtn);
+      videoContainer.appendChild(controls);
     }
 
-    // main click handler: WAIT for keyword loader, then proceed
+    // main click handler
     btn.addEventListener('click', async () => {
       const raw = textarea.value.trim();
       if (!raw) { resp.textContent = 'Por favor, escríbele a Aurorael.'; return; }
 
-      // wait the keywords loader (but don't hang forever)
       try { await Promise.race([keywordsReady, new Promise(res => setTimeout(res, 1200))]); } catch (e) { /* ignore */ }
 
       const locationToSend = expectingLocation ? raw : "";
@@ -712,9 +751,6 @@
           } else {
             expectingLocation = false; textarea.placeholder = "Escribe tu pregunta..."; textarea.value = ''; typeText(resp, text, 6);
 
-            // determine if we should show the video:
-            // - if client-side keywords matched the raw prompt OR result text
-            // - OR if server returned data.videoId (route.js may already detect on server)
             const keywordsAvailable = Array.isArray(palabrasClave) && palabrasClave.length > 0;
             const promptMatches = keywordsAvailable && matchAnyKeyword(raw);
             const resultMatches = keywordsAvailable && matchAnyKeyword(text);
@@ -723,14 +759,10 @@
             if (data.videoId && keywordTriggered) {
               renderVideo(data.videoId);
             } else if (data.videoId && !keywordsAvailable) {
-              // if server returned videoId but client couldn't load keywords,
-              // fallback to trusting server (keeps existing behavior)
               renderVideo(data.videoId);
             } else if (!data.videoId && keywordTriggered) {
-              // If client detected keyword but server didn't return videoId, show default
               renderVideo(DEFAULT_VIDEO_ID);
             } else {
-              // otherwise hide video
               renderVideo(null);
             }
           }
@@ -749,5 +781,4 @@
 
   </script>
 </body>
-
 </html>

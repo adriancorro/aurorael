@@ -667,7 +667,7 @@
     let keywordsReady = (async function loadKeywordsModule() {
       try {
         const mod = await import('/js/keywords.js');
-        if (mod && Array.isArray(mod.palabrasClave)) {
+        if (mod && Array.isArray(mod.KEYWORDS)) {
           palabrasClave = mod.palabrasClave.map(p => normalize(String(p)));
           console.log('[keywords] cargadas (import):', palabrasClave.length);
           return true;

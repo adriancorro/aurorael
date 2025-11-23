@@ -1,7 +1,5 @@
 // =============================================
-// FULL route.js — VERSION ESTABLE Y FUNCIONAL
-// Arquitectura profesional + weather + hora/fecha
-// Optimizado y con fallback gpt-4o
+// FULL route.js — VERSION ESTABLE Y FUNCIONAL (FIXED)
 // =============================================
 
 import { corsHeaders } from "../utils/cors.js";
@@ -22,6 +20,55 @@ import { fetchWeather } from "../services/weatherService.js";
 import { runModel } from "../services/openaiService.js";
 import { KEYWORDS } from "../config/keywords.js";
 
+// ---------- Concurrency control (simple) ----------
+let concurrentRequests = 0;
+const MAX_CONCURRENT = 6; // ajustar según tu cuota / tolerancia
+
+// Helper: extrae texto de distintas formas que puede venir la Responses API
+function extractTextFromResponse(resp) {
+  if (!resp) return "";
+  // 1) Some SDKs expose .output_text
+  if (typeof resp.output_text === "string" && resp.output_text.trim().length) {
+    return resp.output_text;
+  }
+  // 2) New Responses API structure: resp.output[0].content[0].text
+  try {
+    if (Array.isArray(resp.output) && resp.output.length > 0) {
+      const content = resp.output[0].content;
+      if (Array.isArray(content)) {
+        // find first content item with .text
+        for (const item of content) {
+          if (typeof item.text === "string" && item.text.trim().length) {
+            return item.text;
+          }
+          // sometimes "type":"output_text" with 'text' inside
+          if (item?.type === "output_text" && typeof item?.text === "string") {
+            return item.text;
+          }
+          // sometimes content items have 'content' nested
+          if (item?.content && typeof item.content === "string") {
+            return item.content;
+          }
+        }
+      }
+    }
+  } catch (e) {
+    // ignore and continue
+  }
+  // 3) Older ChatCompletion-like shapes
+  try {
+    if (resp.choices && Array.isArray(resp.choices) && resp.choices[0]?.message?.content) {
+      return resp.choices[0].message.content;
+    }
+  } catch (e) {}
+  // fallback: try JSON stringify as last resort (short)
+  try {
+    return String(JSON.stringify(resp)).slice(0, 1000);
+  } catch (e) {
+    return "";
+  }
+}
+
 // =============================================
 // POST
 // =============================================
@@ -29,140 +76,218 @@ export async function POST(req) {
   const origin = req.headers.get("origin") || "";
   const headers = corsHeaders(origin);
 
-  const body = await req.json().catch(() => ({}));
-  const prompt = (body.prompt || "").trim();
-  const sessionId = (body.sessionId || "").trim();
-
-  const { id, session } = getOrCreateSession(sessionId);
-  if (!prompt)
+  // Concurrency check
+  if (concurrentRequests >= MAX_CONCURRENT) {
     return new Response(
-      JSON.stringify({ error: "Prompt vacío", sessionId: id }),
-      { status: 400, headers }
-    );
-
-  const clean = normalizeText(prompt);
-  const lang = detectLanguage(prompt);
-
-  // =============================================
-  // KEYWORDS → autor
-  // =============================================
-  const askAuthor = KEYWORDS.some((k) => clean.includes(normalizeText(k)));
-  if (askAuthor) {
-    const txt =
-      "AURORAEL fue creada por **Adrian Corro** en un proyecto filosófico-crítico. Si deseas ver su origen metafísico, te muestro un video.";
-
-    return new Response(
-      JSON.stringify({ result: txt, videoId: "jOSO3AAIUzM", sessionId: id }),
-      { status: 200, headers }
+      JSON.stringify({ error: "Server busy — try again later" }),
+      { status: 429, headers }
     );
   }
 
-  // =============================================
-  // WEATHER / TIME / DATE
-  // =============================================
-  if (
-    isWeatherQuestion(prompt) ||
-    isTimeQuestion(prompt) ||
-    isDateQuestion(prompt)
-  ) {
-    const loc = extractLocation(prompt) || session.lastLocation;
+  concurrentRequests++;
+  try {
+    const body = await req.json().catch(() => ({}));
+    const prompt = (body.prompt || "").trim();
+    const sessionId = (body.sessionId || "").trim();
 
-    if (!loc) {
+    const { id, session } = getOrCreateSession(sessionId);
+    if (!prompt) {
       return new Response(
-        JSON.stringify({
-          result: "¿De qué ciudad hablas? (Ciudad, País)",
-          sessionId: id,
-        }),
+        JSON.stringify({ error: "Prompt vacío", sessionId: id }),
+        { status: 400, headers }
+      );
+    }
+
+    const clean = normalizeText(prompt);
+    const lang = detectLanguage(prompt);
+
+    // =============================================
+    // KEYWORDS → autor
+    // =============================================
+    const askAuthor = KEYWORDS.some((k) => clean.includes(normalizeText(k)));
+    if (askAuthor) {
+      const txt =
+        "AURORAEL fue creada por **Adrian Corro** en un proyecto filosófico-crítico. Si deseas ver su origen metafísico, te muestro un video.";
+
+      return new Response(
+        JSON.stringify({ result: txt, videoId: "jOSO3AAIUzM", sessionId: id }),
         { status: 200, headers }
       );
     }
 
-    session.lastLocation = loc;
+    // =============================================
+    // WEATHER / TIME / DATE
+    // =============================================
+    if (isWeatherQuestion(prompt) || isTimeQuestion(prompt) || isDateQuestion(prompt)) {
+      const loc = extractLocation(prompt) || session.lastLocation;
 
+      if (!loc) {
+        return new Response(
+          JSON.stringify({
+            result: "¿De qué ciudad hablas? (Ciudad, País)",
+            sessionId: id,
+          }),
+          { status: 200, headers }
+        );
+      }
+
+      session.lastLocation = loc;
+
+      try {
+        const w = await fetchWeather(loc);
+
+        // ---------- WEATHER ----------
+        if (isWeatherQuestion(prompt)) {
+          const res =
+            lang === "es"
+              ? `En ${w.name}, ${w.country}: Temp ${w.temp}°C, sensación ${w.feels}°C. ${w.desc}.`
+              : `In ${w.name}, ${w.country}: Temp ${w.temp}°C, feels like ${w.feels}°C. ${w.desc}.`;
+
+          return new Response(JSON.stringify({ result: res, sessionId: id }), {
+            status: 200,
+            headers,
+          });
+        }
+
+        // ---------- TIME / DATE ----------
+        const tz = w.raw?.timezone ?? 0;
+        const local = new Date(Date.now() + tz * 1000);
+
+        if (isTimeQuestion(prompt)) {
+          const res =
+            lang === "es"
+              ? `Hora local en ${w.name}: ${local.toLocaleTimeString()}`
+              : `Local time in ${w.name}: ${local.toLocaleTimeString()}`;
+
+          return new Response(JSON.stringify({ result: res, sessionId: id }), {
+            status: 200,
+            headers,
+          });
+        }
+
+        if (isDateQuestion(prompt)) {
+          const res =
+            lang === "es"
+              ? `Fecha local en ${w.name}: ${local.toLocaleString()}`
+              : `Local date in ${w.name}: ${local.toLocaleString()}`;
+
+          return new Response(JSON.stringify({ result: res, sessionId: id }), {
+            status: 200,
+            headers,
+          });
+        }
+      } catch (err) {
+        console.error("Weather service error:", err);
+        return new Response(
+          JSON.stringify({ error: err?.message || String(err), sessionId: id }),
+          { status: 500, headers }
+        );
+      }
+    }
+
+    // =============================================
+    // GENERAL LLM
+    // =============================================
+    const systemMsg =
+      lang === "es"
+        ? "Eres AURORAEL, una IA filósofa crítico-teórica (Frankfurt + Žižek + Lacan). Responde con precisión, profundidad y claridad."
+        : "You are AURORAEL, a critical-theory philosophical system. Respond with depth and precision.";
+
+    const history = prepareHistory(session.history);
+
+    const messages = [
+      { role: "system", content: systemMsg },
+      {
+        role: "system",
+        content: session.lastLocation
+          ? `Ubicación conocida del usuario: ${session.lastLocation}`
+          : "",
+      },
+      ...history,
+      { role: "user", content: adaptiveTruncate(prompt, 1600) },
+    ];
+
+    // Llamada al servicio OpenAI (runModel puede lanzar o devolver objeto)
+    let modelResult;
     try {
-      const w = await fetchWeather(loc);
-
-      // ---------- WEATHER ----------
-      if (isWeatherQuestion(prompt)) {
-        const res =
-          lang === "es"
-            ? `En ${w.name}, ${w.country}: Temp ${w.temp}°C, sensación ${w.feels}°C. ${w.desc}.`
-            : `In ${w.name}, ${w.country}: Temp ${w.temp}°C, feels like ${w.feels}°C. ${w.desc}.`;
-
-        return new Response(JSON.stringify({ result: res, sessionId: id }), {
-          status: 200,
-          headers,
-        });
-      }
-
-      // ---------- TIME / DATE ----------
-      const tz = w.raw.timezone;
-      const local = new Date(Date.now() + tz * 1000);
-
-      if (isTimeQuestion(prompt)) {
-        const res =
-          lang === "es"
-            ? `Hora local en ${w.name}: ${local.toLocaleTimeString()}`
-            : `Local time in ${w.name}: ${local.toLocaleTimeString()}`;
-
-        return new Response(JSON.stringify({ result: res, sessionId: id }), {
-          status: 200,
-          headers,
-        });
-      }
-
-      if (isDateQuestion(prompt)) {
-        const res =
-          lang === "es"
-            ? `Fecha local en ${w.name}: ${local.toLocaleString()}`
-            : `Local date in ${w.name}: ${local.toLocaleString()}`;
-
-        return new Response(JSON.stringify({ result: res, sessionId: id }), {
-          status: 200,
-          headers,
-        });
-      }
+      modelResult = await runModel(messages);
     } catch (err) {
+      // Si runModel lanza, tratamos el error aquí
+      console.error("runModel threw:", err);
+
+      // interpretar 429 / insufficient_quota
+      const status = err?.status || err?.error?.status || null;
+      const code = err?.code || err?.error?.code || err?.error?.type || null;
+      const message = err?.message || (err?.error && err.error.message) || String(err);
+
+      if (status === 429 || code === "insufficient_quota" || code === "rate_limit") {
+        // intenta leer Retry-After de headers si existe
+        let retryAfter = null;
+        try {
+          if (err?.headers && typeof err.headers.get === "function") {
+            retryAfter = err.headers.get("Retry-After") || err.headers.get("retry-after");
+            if (retryAfter) retryAfter = Number(retryAfter);
+          }
+        } catch (e) {
+          /* ignore */
+        }
+        console.warn("OpenAI rate limit / quota error:", message);
+        return new Response(
+          JSON.stringify({
+            error: "Rate limit / insufficient quota on OpenAI. Please retry later.",
+            detalle: message,
+          }),
+          {
+            status: 429,
+            headers: { ...headers, "Retry-After": String(retryAfter ?? 10) },
+          }
+        );
+      }
+
+      // otro error inesperado
       return new Response(
-        JSON.stringify({ error: err.message, sessionId: id }),
+        JSON.stringify({ error: "OpenAI error", detalle: message }),
         { status: 500, headers }
       );
     }
+
+    // Si runModel retorna un objeto tipo { ok: false, ... } (si implementaste esa lógica)
+    if (modelResult && typeof modelResult === "object" && modelResult.ok === false) {
+      // handle structured error from runModel
+      if (modelResult.code === "rate_limit") {
+        const retryAfter = modelResult.retryAfter ?? 10;
+        return new Response(
+          JSON.stringify({
+            error: "Rate limit / insufficient quota on OpenAI. Please retry later.",
+            detalle: modelResult.message || modelResult.details || null,
+          }),
+          { status: 429, headers: { ...headers, "Retry-After": String(retryAfter) } }
+        );
+      }
+      return new Response(
+        JSON.stringify({ error: "OpenAI error", detalle: modelResult.message || null }),
+        { status: modelResult.status || 500, headers }
+      );
+    }
+
+    // modelResult may be the direct Responses API object or an object wrapper { response: ..., usedFallback: ... }
+    let respObj = modelResult;
+    if (modelResult && modelResult.response) respObj = modelResult.response;
+
+    const text = extractTextFromResponse(respObj) || "";
+
+    // push to session history
+    pushHistory(session, "user", prompt);
+    pushHistory(session, "assistant", text);
+
+    return new Response(JSON.stringify({ result: text, sessionId: id }), {
+      status: 200,
+      headers,
+    });
+  } finally {
+    // decrement concurrent counter siempre
+    concurrentRequests = Math.max(0, concurrentRequests - 1);
   }
-
-  // =============================================
-  // GENERAL LLM
-  // =============================================
-
-  const systemMsg =
-    lang === "es"
-      ? "Eres AURORAEL, una IA filósofa crítico-teórica (Frankfurt + Žižek + Lacan). Responde con precisión, profundidad y claridad."
-      : "You are AURORAEL, a critical-theory philosophical system. Respond with depth and precision.";
-
-  const history = prepareHistory(session.history);
-
-  const messages = [
-    { role: "system", content: systemMsg },
-    {
-      role: "system",
-      content: session.lastLocation
-        ? `Ubicación conocida del usuario: ${session.lastLocation}`
-        : "",
-    },
-    ...history,
-    { role: "user", content: adaptiveTruncate(prompt, 1600) },
-  ];
-
-  const result = await runModel(messages);
-  const text = result.output[0].content[0].text || "";
-
-  pushHistory(session, "user", prompt);
-  pushHistory(session, "assistant", text);
-
-  return new Response(JSON.stringify({ result: text, sessionId: id }), {
-    status: 200,
-    headers,
-  });
 }
 
 // =============================================

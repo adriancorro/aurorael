@@ -604,22 +604,55 @@
       }, speed);
     }
 
-    async function sendPrompt(prompt, location = "") {
+    // Reintentos con backoff exponencial en cliente (reemplaza la versión previa)
+    async function sendPrompt(prompt, location = "", maxAttempts = 4) {
       const sessionId = getSessionId();
       const tz = (Intl && Intl.DateTimeFormat) ? Intl.DateTimeFormat().resolvedOptions().timeZone : "";
       const body = { prompt, sessionId };
       if (location) body.location = location;
       if (tz) body.timeZone = tz;
-      try {
-        const res = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-        if (!res.ok) return { error: `Server returned ${res.status}` };
-        const data = await res.json().catch(() => ({ error: 'No JSON response from server' }));
-        if (data.sessionId) localStorage.setItem('sessionId', data.sessionId);
-        return data;
-      } catch (e) {
-        console.error('fetch error', e);
-        return { error: 'Error connecting to server' };
+
+      let attempt = 0;
+      let backoff = 800; // ms
+
+      while (attempt < maxAttempts) {
+        try {
+          const res = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+          });
+
+          if (res.status === 429) {
+            // Si el servidor envía Retry-After, usarlo; sino, usar backoff exponencial
+            const ra = res.headers.get('Retry-After');
+            const wait = ra ? parseFloat(ra) * 1000 : backoff;
+            await new Promise(r => setTimeout(r, wait));
+            attempt++;
+            backoff *= 2;
+            continue;
+          }
+
+          if (!res.ok) {
+            const txt = await res.text().catch(() => null);
+            return { error: `Server returned ${res.status} ${txt || ''}` };
+          }
+
+          const data = await res.json().catch(() => ({ error: 'No JSON response from server' }));
+          if (data.sessionId) localStorage.setItem('sessionId', data.sessionId);
+          return data;
+        } catch (e) {
+          // Errores de red -> reintentar con backoff
+          attempt++;
+          await new Promise(r => setTimeout(r, backoff));
+          backoff *= 2;
+          if (attempt >= maxAttempts) {
+            return { error: 'Error connecting to server after retries' };
+          }
+        }
       }
+
+      return { error: 'Max retry attempts reached' };
     }
 
     const btn = document.getElementById('sendBtn'),
@@ -781,4 +814,5 @@
 
   </script>
 </body>
+
 </html>

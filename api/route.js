@@ -284,6 +284,24 @@ async function fetchWeatherForLocation(location) {
   }
 }
 
+// ------------------- Ajustes para reducir tokens y control local de TPM -------------------
+function truncateText(s, maxChars = 1500) {
+  if (!s) return s;
+  return s.length > maxChars ? s.slice(0, maxChars) + "… (truncated)" : s;
+}
+
+// Estimador local simple de tokens por proceso (no exacto). Ajusta si ves desviaciones.
+const ESTIMATED_TOKEN_PER_CHAR = 1 / 4; // 1 token ≈ 4 chars
+const TPM_LIMIT_TARGET = 95000; // objetivo por minuto (un poco por debajo del límite real)
+let tokensUsedThisMinute = 0;
+setInterval(() => {
+  tokensUsedThisMinute = 0;
+}, 60 * 1000);
+function estimateTokensForMessages(messages) {
+  const text = messages.map((m) => m.content || "").join(" ");
+  return Math.ceil(text.length * ESTIMATED_TOKEN_PER_CHAR);
+}
+
 // ------------------- MAIN: POST -------------------
 export async function POST(req) {
   try {
@@ -322,11 +340,12 @@ export async function POST(req) {
     // ------------------- BLOQUE: detección de palabras clave (autor) -------------------
     try {
       // --- PON AQUI TU VIDEO_ID: la parte después de '?v=' en la URL de YouTube ---
-      // Ejemplo: for https://www.youtube.com/watch?v=dQw4w9WgXcQ -> videoId = "dQw4w9WgXcQ"
       const DEFAULT_VIDEO_ID = "jOSO3AAIUzM"; // <-- reemplaza esto por tu videoId
 
       // Cargar palabras clave dinámicamente (tu archivo no se cambia)
-      const { palabrasClave } = await import(`${process.cwd()}/api/keywords.js`);
+      const { palabrasClave } = await import(
+        `${process.cwd()}/api/keywords.js`
+      );
 
       // Normalizar todas las palabras clave
       const normalizedKeywords = (palabrasClave || []).map((f) =>
@@ -660,14 +679,14 @@ export async function POST(req) {
     }
 
     // ------------------- Caso general: pasar a OpenAI con contexto de sesión -------------------
-    const MAX_HISTORY = 8;
+    const MAX_HISTORY = 4;
     const historyForModel = session.history
       .slice(-MAX_HISTORY)
-      .map((h) => ({ role: h.role, content: h.content }));
+      .map((h) => ({ role: h.role, content: truncateText(h.content, 1200) }));
 
     // Añadir prompt actual
-    historyForModel.push({ role: "user", content: prompt });
-    session.history.push({ role: "user", content: prompt });
+    historyForModel.push({ role: "user", content: truncateText(prompt, 1400) });
+    session.history.push({ role: "user", content: truncateText(prompt, 1400) });
 
     // Inicializar OpenAI
     const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -690,12 +709,43 @@ export async function POST(req) {
 
     const messagesToSend = contextMessages.concat(historyForModel);
 
-    const completion = await client.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: messagesToSend,
-      temperature: 0.8,
-      max_tokens: 800,
-    });
+    // Estimación de tokens y control local TPM
+    const estimated = estimateTokensForMessages(messagesToSend);
+
+    // Comprueba el contador local y evita picos
+    if (tokensUsedThisMinute + estimated > TPM_LIMIT_TARGET) {
+      const retryAfter = 10;
+      return new Response(
+        JSON.stringify({
+          error: "Rate limit local excedido — por favor reintenta más tarde.",
+          detalle: `Estimated tokens: ${estimated}. Tokens used this minute: ${tokensUsedThisMinute}.`,
+        }),
+        {
+          status: 429,
+          headers: {
+            ...headersBase,
+            "Retry-After": String(retryAfter),
+          },
+        }
+      );
+    }
+
+    // Sumar estimación antes de la llamada
+    tokensUsedThisMinute += estimated;
+
+    let completion;
+    try {
+      completion = await client.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: messagesToSend,
+        temperature: 0.8,
+        max_tokens: 400,
+      });
+    } catch (err) {
+      // Si falla la llamada, restar la estimación para no penalizar el contador
+      tokensUsedThisMinute = Math.max(0, tokensUsedThisMinute - estimated);
+      throw err;
+    }
 
     const respuesta =
       completion.choices?.[0]?.message?.content || "Sin respuesta generada.";

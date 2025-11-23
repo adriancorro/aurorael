@@ -56,7 +56,7 @@ html, body {
   position: absolute;
   inset: 0;
   /* ruta local del retrato (ajusta si tu servidor la mueve) */
-  background-image: url('img/aurorael.PNG');
+  background-image: url('../img/aurorael.PNG');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;

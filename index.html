@@ -1,288 +1,66 @@
 <!DOCTYPE html>
-<html lang="es">
+<defs>
+  <linearGradient id="g2" x1="0" x2="1">
+    <stop offset="0" stop-color="#00f0ff" />
+    <stop offset="1" stop-color="#d45cff" />
+  </linearGradient>
+</defs>
+<rect x="2" y="2" width="20" height="20" rx="4" fill="rgba(0,0,0,0.18)" stroke="url(#g2)" stroke-width="1.3" />
+<path d="M6 17L10 7L14 17" stroke="#9fefff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
+  fill="none" />
+</svg>
+</div>
+<div>
+  <div class="title">A U R O R A E L</div>
+  <div class="subtitle">AI Philosophy</div>
+</div>
+</div>
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>AURORAEL</title>
-  <link rel="icon" type="image/png" sizes="512x512" href="img/hegel.png" />
-  <meta name="description" content="Aurorael — AI futurista. Pregúntale cosas y experimenta la interfaz cyberpunk." />
 
-  <style>
-    /* ---------- Base & fonts ---------- */
-    @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&family=Exo+2:wght@300;400;600;700&display=swap");
+<p class="hero-desc">Aurorael es una inteligencia artificial teórica crítica con estética cyberpunk. Pregúntale lo que
+  quieras.</p>
+</div>
+</div>
+</div>
 
-    :root {
-      --bg-dark: #05030b;
-      --neon-cyan: #00f0ff;
-      --neon-magenta: #d45cff;
-      --accent: #7ee7ff
-    }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0
-    }
+<section class="panel" aria-labelledby="panel-title">
+  <div class="scanline" aria-hidden="true"></div>
 
-    html,
-    body {
-      height: 100%;
-      overflow-x: hidden;
-      background: radial-gradient(1000px 500px at 12% 18%, rgba(6, 8, 20, .85), transparent 12%), radial-gradient(800px 420px at 90% 82%, rgba(50, 0, 80, .6), transparent 12%), var(--bg-dark);
-      font-family: "Exo 2", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-      color: #dffaff;
-      -webkit-font-smoothing: antialiased
-    }
 
-    /* ---------- Layout ---------- */
-    .stage {
-      min-height: 100vh;
-      display: grid;
-      grid-template-columns: 420px 1fr;
-      gap: 36px;
-      align-items: start;
-      padding: 56px 48px;
-      position: relative;
-      max-width: 100%;
-      z-index: 1
-    }
-
-    @media(max-width:1100px) {
-      .stage {
-        grid-template-columns: 1fr;
-        padding: 28px
-      }
-    }
-
-    @media(max-width:640px) {
-      .stage {
-        padding: 16px
-      }
-    }
-
-    /* ---------- Hero ---------- */
-    .hero {
-      position: relative;
-      width: 100%;
-      max-width: 420px;
-      height: 680px;
-      border-radius: 18px;
-      overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, .03);
-      box-shadow: 0 30px 90px rgba(0, 0, 0, .6), inset 0 0 40px rgba(0, 255, 255, .02);
-      background: linear-gradient(180deg, rgba(6, 6, 12, .6), rgba(0, 0, 0, .55));
-      align-self: start
-    }
-
-    .portrait {
-      position: absolute;
-      inset: 0;
-      background-image: url('img/aurorael.PNG');
-      background-repeat: no-repeat;
-      background-size: cover;
-      background-position: center;
-      filter: contrast(1.08) saturate(1.05) hue-rotate(-3deg);
-      animation: portraitFloat 6s ease-in-out infinite;
-      z-index: 1
-    }
-
-    @keyframes portraitFloat {
-      0% {
-        transform: translateY(0) scale(1)
-      }
-
-      50% {
-        transform: translateY(-10px) scale(1.01)
-      }
-
-      100% {
-        transform: translateY(0) scale(1)
-      }
-    }
-
-    /* ---------- Overlay de reproducción con sonido ---------- */
-
-    .big-unmute {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      padding: 24px;
-      background: radial-gradient(circle at center, rgba(0, 0, 0, .55), rgba(0, 0, 0, .85));
-      backdrop-filter: blur(3px);
-      z-index: 10;
-    }
-
-    .big-text {
-      max-width: 90%;
-      text-align: center;
-      color: #e0faff;
-      font-weight: 600;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .big-unmute-btn {
-      padding: 10px 22px;
-      border-radius: 999px;
-      border: 1px solid rgba(0, 240, 255, .6);
-      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
-      color: #021016;
-      font-weight: 700;
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      cursor: pointer;
-      box-shadow: 0 0 20px rgba(0, 240, 255, .4);
-      transition: transform .15s ease, box-shadow .15s ease;
-    }
-
-    .big-unmute-btn:hover {
-      transform: translateY(-2px) scale(1.03);
-      box-shadow: 0 0 26px rgba(0, 240, 255, .7);
-    }
-
-    @media(max-width:640px) {
-      .big-unmute {
-        padding: 16px;
-        gap: 12px;
-      }
-
-      .big-unmute-btn {
-        width: 100%;
-        max-width: 240px;
-      }
-    }
-
-    /* (resto del CSS sigue exactamente igual...) */
-  </style>
-</head>
-
-<body>
-  <canvas id="particlesCanvas" aria-hidden="true"></canvas>
-
-  <div class="banner" id="banner" role="status" aria-live="polite"></div>
-
-  <div class="stage" style="z-index:1">
-
-    <!-- Hero -->
+  <div class="panel-head">
     <div>
-      <div class="hero">
-        <div class="portrait"></div>
-        <div class="card-left">
-          <div class="brand">
-            <div class="logo">
-              <svg viewBox="0 0 24 24" width="36" height="36">
-                <defs>
-                  <linearGradient id="g2" x1="0" x2="1">
-                    <stop offset="0" stop-color="#00f0ff" />
-                    <stop offset="1" stop-color="#d45cff" />
-                  </linearGradient>
-                </defs>
-                <rect x="2" y="2" width="20" height="20" rx="4" fill="rgba(0,0,0,0.18)" stroke="url(#g2)"
-                  stroke-width="1.3" />
-                <path d="M6 17L10 7L14 17" stroke="#9fefff" stroke-width="1.6" stroke-linecap="round"
-                  stroke-linejoin="round" fill="none" />
-              </svg>
-            </div>
-            <div>
-              <div class="title">A U R O R A E L</div>
-              <div class="subtitle">AI Philosophy </div>
-            </div>
-          </div>
-
-          <p style="margin-top:10px;color:#bfefff;font-size:13px;line-height:1.4">
-            Aurorael es una inteligencia artificial teórica crítica con estética cyberpunk.</p>
-        </div>
-      </div>
+      <h2 id="panel-title">AURORAEL</h2>
+      <div class="desc">Ask and explore — type your question below.</div>
     </div>
-
-    <!-- Panel -->
-    <section class="panel">
-      <div class="scanline"></div>
-
-      <div class="panel-head">
-        <div>
-          <h2>AURORAEL</h2>
-          <div class="desc">Ask and explore — type your question below.</div>
-        </div>
-      </div>
-
-      <div class="composer">
-        <textarea id="prompt" placeholder="Any topic you’d like to talk about?"></textarea>
-        <div class="controls"><button id="sendBtn">Ask</button></div>
-
-        <div id="respuesta"></div>
-
-        <div id="videoContainer"></div>
-
-        <div class="panel-foot">
-          <div>Created by <a href="https://github.com/adriancorro" target="_blank">Adrian</a></div>
-          <div>Powered by <strong>The Frankfurt School</strong></div>
-        </div>
-      </div>
-    </section>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <div class="status-pill">Online</div>
+    </div>
   </div>
 
-  <script>
-    /* ---------------- VIDEO FIX ---------------- */
-    function renderVideo(videoId) {
-      const videoContainer = document.getElementById('videoContainer');
-      videoContainer.innerHTML = "";
-      if (!videoId) return;
 
-      const paramsMuted = `autoplay=1&mute=1&rel=0&modestbranding=1&playsinline=1&vq=hd1080`;
-      const paramsUnmuted = `autoplay=1&mute=0&rel=0&modestbranding=1&playsinline=1&vq=hd1080`;
+  <div class="composer" role="form" aria-label="Composer">
+    <textarea id="prompt" placeholder="Any topic you’d like to talk about? " aria-label="Pregunta"></textarea>
+    <div class="controls"><button id="sendBtn" aria-label="Consultar">Ask</button></div>
 
-      const wrap = document.createElement("div");
-      wrap.className = "video-wrap";
-      wrap.style.position = "relative";
-      wrap.style.paddingTop = "56.25%";
-      wrap.style.height = "0";
 
-      const iframe = document.createElement("iframe");
-      iframe.src = `https://www.youtube.com/embed/${videoId}?${paramsMuted}`;
-      iframe.allow = "autoplay; encrypted-media; fullscreen";
-      iframe.frameBorder = "0";
-      iframe.style.position = "absolute";
-      iframe.style.top = "0";
-      iframe.style.left = "0";
-      iframe.style.width = "100%";
-      iframe.style.height = "100%";
+    <div id="respuesta" role="status" aria-live="polite"></div>
 
-      wrap.appendChild(iframe);
 
-      /**
-       * 🔥 Overlay con botón centrado
-       */
-      const overlay = document.createElement("div");
-      overlay.className = "big-unmute";
+    <div id="videoContainer" aria-live="polite" aria-atomic="true"></div>
 
-      const instr = document.createElement("div");
-      instr.className = "big-text";
-      instr.textContent = "Pulsa para reproducir con sonido (necesario por políticas del navegador)";
 
-      const btn = document.createElement("button");
-      btn.textContent = "Reproducir con sonido";
-      btn.className = "big-unmute-btn";
+    <div class="panel-foot">
+      <div>Created by <a href="https://github.com/adriancorro" target="_blank" rel="noopener">Adrian</a></div>
+      <div style="opacity:0.9">Powered by <strong>The Frankfurt School of Critical Theory</strong></div>
+    </div>
+  </div>
+</section>
+</div>
 
-      btn.onclick = () => {
-        iframe.src = `https://www.youtube.com/embed/${videoId}?${paramsUnmuted}`;
-        overlay.remove();
-      };
 
-      overlay.appendChild(instr);
-      overlay.appendChild(btn);
-      wrap.appendChild(overlay);
-
-      videoContainer.appendChild(wrap);
-    }
-  </script>
-
+<!-- JS modular -->
+<script type="module" src="js/app.js"></script>
 </body>
 
 </html>

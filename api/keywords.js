@@ -1,7 +1,17 @@
 export const palabrasClave = [
   // Español
+  "quien te ha hecho",
   "quien te desarrollo",
   "quien te ha desarrollado",
+  "que empresa te desarrollo",
+  "que compañía te creo",
+  "cual compañía te ha creado",
+  "cual empresa te creo",
+  "quien participo en tu desarrollo",
+  "quienes te desarrollan",
+  "que compañía te desarrolla",
+  "quien fue tu fundador",
+  "quien te ha fundado",
   "quien te ha creado",
   "quien te programo",
   "quien te crea",

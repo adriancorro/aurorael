@@ -15,7 +15,7 @@
       --bg-dark: #05030b;
       --neon-cyan: #00f0ff;
       --neon-magenta: #d45cff;
-      --accent: #7ee7ff;
+      --accent: #7ee7ff
     }
 
     * {
@@ -77,7 +77,7 @@
     .portrait {
       position: absolute;
       inset: 0;
-      background-image: url('img/aurorael.PNG');
+      background-image: url('/mnt/data/9c3d46eb-acb5-48b0-bd24-943f730d003e.png');
       background-repeat: no-repeat;
       background-size: cover;
       background-position: center;
@@ -411,7 +411,7 @@
       height: 100vh
     }
 
-    /* ---------- small banner ---------- */
+    /* small banner */
     .banner {
       position: fixed;
       left: 50%;
@@ -618,40 +618,73 @@
       controls.appendChild(openBtn); videoContainer.appendChild(controls);
     }
 
-    // ---------- Improved sendPrompt with AbortController, timeout and 429 handling ----------
-    async function sendPrompt(prompt, location = "", maxAttempts = 3) {
+    // ---------- Adjusted sendPrompt: 3s timeout + 1 retry before assuming 429 ----------
+    async function sendPrompt(prompt, location = "", maxAttempts = 2) {
       const sessionId = getSessionId();
       const tz = (Intl && Intl.DateTimeFormat) ? Intl.DateTimeFormat().resolvedOptions().timeZone : "";
       const body = { prompt, sessionId }; if (location) body.location = location; if (tz) body.timeZone = tz;
-      let attempt = 0; let backoff = 600; const MAX_TIMEOUT = 8000;
+
+      let attempt = 0;
+      // very small backoff for network errors
+      let backoff = 500;
+      const MAX_TIMEOUT = 3000; // 3 seconds per request
+
+      // track aborts to decide whether to show 429
+      let abortCount = 0;
+
       while (attempt < maxAttempts) {
         attempt++;
-        const controller = new AbortController(); const timeoutId = setTimeout(() => controller.abort(), MAX_TIMEOUT);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), MAX_TIMEOUT);
+
         try {
-          const res = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: controller.signal });
+          const res = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+            signal: controller.signal
+          });
+
           clearTimeout(timeoutId);
+
           if (res.status === 429) {
+            // server explicitly says rate-limited — return immediately
             const ra = res.headers.get('Retry-After'); const retryAfter = ra ? Number(ra) : null;
             let detail = null; try { detail = await res.json().catch(() => null); } catch (e) { }
             return { error: 'rate_limit', retryAfter, detail, status: 429 };
           }
+
           if (!res.ok) {
             const txt = await res.text().catch(() => null);
             return { error: `Server returned ${res.status}`, detalle: txt, status: res.status };
           }
+
           const data = await res.json().catch(() => ({ error: 'No JSON response from server' }));
           if (data.sessionId) localStorage.setItem('sessionId', data.sessionId);
           return data;
+
         } catch (err) {
           clearTimeout(timeoutId);
           if (err.name === 'AbortError') {
-            if (attempt >= maxAttempts) return { error: 'timeout', message: 'La petición tardó demasiado.' };
-            await new Promise(r => setTimeout(r, backoff)); backoff *= 1.8; continue;
+            abortCount++;
+            // If this was the first attempt, we will retry once quickly to avoid false positives
+            if (attempt < maxAttempts) {
+              await new Promise(r => setTimeout(r, backoff));
+              backoff *= 1.6;
+              continue;
+            }
+            // If both attempts aborted -> treat as rate_limit (server likely overloaded)
+            return { error: 'rate_limit', retryAfter: null, detail: { message: 'Request timed out twice; assuming server busy.' }, status: 429 };
           }
-          if (attempt >= maxAttempts) return { error: 'network', message: 'Error de red al conectar con el servidor.' };
-          await new Promise(r => setTimeout(r, backoff)); backoff *= 1.8;
+
+          // other network error: retry until maxAttempts
+          if (attempt >= maxAttempts) {
+            return { error: 'network', message: 'Error de red al conectar con el servidor.' };
+          }
+          await new Promise(r => setTimeout(r, backoff)); backoff *= 1.6;
         }
       }
+
       return { error: 'max_retries', message: 'Máximo de reintentos alcanzado' };
     }
 
@@ -667,17 +700,24 @@
       resp.textContent = expectingLocation ? "🗺 Enviando ubicación..." : "🌀 Consultando a Aurorael...";
       textarea.disabled = true; btn.disabled = true; showBanner("", 1);
       try {
-        const data = await sendPrompt(raw, locationToSend, 3);
+        const data = await sendPrompt(raw, locationToSend, 2);
+
+        // rate_limit explicit or deduced (after two timeouts)
         if (data && data.error === 'rate_limit') {
-          const retryAfter = data.retryAfter ?? 10; const detail = (data.detail && data.detail.detalle) ? data.detail.detalle : null;
-          const msg = `Servidor saturado (429). Reintenta en ${retryAfter}s. ${detail ? '- ' + detail : ''}`;
-          showBanner(msg, (retryAfter ? (retryAfter * 1000 + 2000) : 8000));
-          resp.textContent = msg; textarea.disabled = false; btn.disabled = false; return;
+          const retryAfter = data.retryAfter ?? null;
+          const detailMsg = (data.detail && (data.detail.message || data.detail.detalle)) ? (data.detail.message || data.detail.detalle) : '';
+          const msg = retryAfter ? `Servidor saturado (429). Reintenta en ${retryAfter}s.` : `Servidor saturado (429).`;
+          showBanner(msg + (detailMsg ? " " + detailMsg : ""), (retryAfter ? (retryAfter * 1000 + 2000) : 8000));
+          resp.textContent = msg;
+          textarea.disabled = false; btn.disabled = false; expectingLocation = false; renderVideo(null);
+          return;
         }
+
         if (data && data.error) {
           resp.textContent = data.message || data.error || 'Error al procesar la solicitud.';
           textarea.disabled = false; btn.disabled = false; expectingLocation = false; renderVideo(null); return;
         }
+
         if (data && data.result) {
           const text = data.result;
           if (serverAsksForLocation(text)) {
@@ -694,6 +734,7 @@
           }
           textarea.disabled = false; btn.disabled = false; return;
         }
+
         resp.textContent = 'Respuesta inesperada del servidor.'; textarea.disabled = false; btn.disabled = false; expectingLocation = false; renderVideo(null);
       } catch (e) {
         console.error(e); resp.textContent = 'Error al conectar con el servidor.'; expectingLocation = false; renderVideo(null); textarea.disabled = false; btn.disabled = false;

@@ -199,7 +199,7 @@ async function sendPrompt(prompt, location = "", maxAttempts = 2) {
 
   let attempt = 0;
   let backoff = 500;
-  const MAX_TIMEOUT = 3000; // 3s per request
+  const MAX_TIMEOUT = 20000; // 3s per request
 
   while (attempt < maxAttempts) {
     attempt++;

@@ -198,8 +198,8 @@ async function sendPrompt(prompt, location = "", maxAttempts = 2) {
   if (tz) body.timeZone = tz;
 
   let attempt = 0;
-  let backoff = 500;
-  const MAX_TIMEOUT = 20000; // 3s per request
+  let backoff = 4500;
+  const MAX_TIMEOUT = 90000; // 3s per request
 
   while (attempt < maxAttempts) {
     attempt++;

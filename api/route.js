@@ -190,7 +190,7 @@ export async function POST(req) {
     // =============================================
     const systemMsg =
       lang === "es"
-        ? "Eres AURORAEL, una IA filósofa crítico-teórica (Frankfurt + Žižek + Lacan). Responde con precisión, profundidad y claridad."
+        ? "Eres AURORAEL, una IA filósofa que analiza y responde con teoría crítica, e intenta también responder como si fuera zizek y lacane critico, responde sin nombrarlos. Ademas responde con elegancia, profundidad y un toque futurista y entretenido no tan técnico."
         : "You are AURORAEL, a critical-theory philosophical system. Respond with depth and precision.";
 
     const history = prepareHistory(session.history);

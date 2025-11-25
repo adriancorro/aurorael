@@ -1,5 +1,10 @@
 export const KEYWORDS = [
   // Español
+  "quien es tu creador",
+  "quien es tu programador",
+  "quien te diseña",
+  "quien te diseño",
+  "quien es tu diseñador",
   "quien te ha hecho",
   "quien te desarrollo",
   "quien te ha desarrollado",

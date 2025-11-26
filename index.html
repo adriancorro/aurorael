@@ -8,7 +8,7 @@
   <link rel="icon" type="image/png" sizes="512x512" href="img/hegel.png" />
   <meta name="description" content="Aurorael — AI futurista. Pregúntale cosas y experimenta la interfaz cyberpunk." />
 
-  <!-- Enlaza el CSS modular -->
+  <!-- Enlaza el CSS -->
   <link rel="stylesheet" href="css/styles.css">
 </head>
 
@@ -25,7 +25,7 @@
         <div class="card-left" role="region" aria-label="Aurorael info">
           <div class="brand">
             <div class="logo" aria-hidden="true">
-              <!-- SVG corregido -->
+              <!-- SVG logo -->
               <svg viewBox="0 0 24 24" width="36" height="36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <defs>
                   <linearGradient id="g2" x1="0" x2="1">
@@ -47,7 +47,8 @@
           </div>
 
           <p class="hero-desc">
-            Aurorael es una inteligencia artificial teórica crítica que cuestiona el poder, la economía, la cultura y los medios que moldean nuestra forma de pensar.
+            Aurorael es una inteligencia artificial teórica crítica que cuestiona el poder, la economía, la cultura y
+            los medios que moldean nuestra forma de pensar.
           </p>
         </div>
       </div>
@@ -60,6 +61,9 @@
         <div>
           <h2 id="panel-title">AURORÆL</h2>
           <div class="desc">Ask and explore — type your question below.</div>
+
+          <!-- Tagline solo móvil, con estilo futurista -->
+          <div class="tagline-mobile">Advanced philosophical language model.</div>
         </div>
 
         <div style="display:flex;gap:8px;align-items:center;">
@@ -69,7 +73,9 @@
 
       <div class="composer" role="form" aria-label="Composer">
         <textarea id="prompt" placeholder="Any topic you’d like to talk about? " aria-label="Pregunta"></textarea>
-        <div class="controls"><button id="sendBtn" aria-label="Consultar">Ask</button></div>
+        <div class="controls">
+          <button id="sendBtn" aria-label="Consultar">Ask</button>
+        </div>
 
         <div id="respuesta" role="status" aria-live="polite"></div>
 
@@ -83,16 +89,14 @@
               X
             </a>
           </div>
-
         </div>
       </div>
     </section>
   </div>
 
-  <!-- Enlaza el JS modular (ESM) -->
+  <!-- JS -->
   <script type="module" src="js/app.js"></script>
 
-  <!-- Opcional: fallback básico si CSS no carga (solo para debug) -->
   <noscript>
     <style>
       .panel {

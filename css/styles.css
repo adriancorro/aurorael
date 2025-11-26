@@ -70,7 +70,6 @@ body {
 .portrait {
   position: absolute;
   inset: 0;
-  /* ruta local del retrato */
   background-image: url('../img/aurorael.PNG');
   background-repeat: no-repeat;
   background-size: cover;
@@ -224,9 +223,45 @@ body {
   opacity: .9;
 }
 
-/* Tagline móvil futurista (por defecto oculta en desktop) */
+/* Tagline móvil (oculta por defecto) */
 .tagline-mobile {
   display: none;
+}
+
+/* Recuadro móvil (oculto por defecto) */
+.mobile-portrait-card {
+  display: none;
+}
+
+.mobile-portrait {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  background-image: url('../img/aurorael.PNG');
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 0 14px rgba(0, 240, 255, 0.45);
+  flex-shrink: 0;
+}
+
+.mobile-portrait-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mobile-name {
+  font-family: "Orbitron", sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #e9fcff;
+}
+
+.mobile-role {
+  font-size: 11px;
+  color: rgba(192, 240, 255, 0.9);
+  opacity: 0.95;
 }
 
 .composer {
@@ -417,62 +452,26 @@ button#sendBtn {
   }
 }
 
-@media (max-width:640px) {
-
-  /* Layout general */
+@media (max-width: 640px) {
   .stage {
     padding: 14px;
     position: relative;
     z-index: 2;
   }
 
-  /* Fondo futurista muchísimo más limpio y elegante */
+  /* Ocultamos el hero grande en móvil (adiós fondo con foto) */
   .hero {
-    position: fixed;
-    inset: 0;
-    height: 100vh;
-    max-width: 100%;
-    border-radius: 0;
-    border: none;
-    box-shadow: none;
-    background: transparent;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  /* Nueva animación suave, estilo “drift elegante” */
-  .portrait {
-    background-image: url('../img/aurorael.PNG');
-    background-size: cover;
-    background-position: center;
-    animation: portraitSoftDrift 18s ease-in-out infinite alternate;
-    filter: brightness(0.92) saturate(1.1);
-  }
-
-  @keyframes portraitSoftDrift {
-    0%   { transform: scale(1.05) translate3d(0,0,0); }
-    50%  { transform: scale(1.09) translate3d(-6px,-8px,0); }
-    100% { transform: scale(1.06) translate3d(4px,6px,0); }
-  }
-
-  /* halos más suaves */
-  .hero::before, .hero::after {
-    opacity: 0.55;
-  }
-
-  /* Ocultar tarjeta izquierda */
-  .card-left {
     display: none;
   }
 
-  /* Nuevo panel estilo GLASS: más transparencia, más limpio */
+  /* Panel: glass + un poco translúcido */
   .panel {
     padding: 20px;
     min-height: auto;
-    background: rgba(5, 10, 20, 0.65);  /* mucho más limpio */
-    backdrop-filter: blur(16px) brightness(1.06);
-    border: 1px solid rgba(0,255,255,0.06);
-    box-shadow: 0 12px 40px rgba(0,0,0,.55);
+    background: rgba(5, 10, 20, 0.9);
+    backdrop-filter: blur(14px) brightness(1.04);
+    border: 1px solid rgba(0, 255, 255, 0.07);
+    box-shadow: 0 18px 60px rgba(0, 0, 0, .6);
     border-radius: 16px;
     z-index: 2;
   }
@@ -481,39 +480,43 @@ button#sendBtn {
     font-size: 26px;
   }
 
-  /* ------ NUEVO TAGLINE SUPER NÍTIDO -------- */
+  /* Tagline móvil: un poco más pequeña, color futurista, nítida */
   .tagline-mobile {
     display: block;
     margin-top: 6px;
     font-family: "Orbitron", sans-serif;
-    font-size: 10px;
-    letter-spacing: 0.24em;
+    font-size: 9px;              /* más pequeña */
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: rgba(220,255,255,0.95); /* mucho más claro */
-    text-shadow: 0 0 9px rgba(0,240,255,0.55);
-    white-space: nowrap; /* 🔥 siempre en una línea */
+    color: var(--accent);        /* cian futurista */
+    white-space: nowrap;         /* siempre en una línea */
+    text-shadow: 0 0 6px rgba(0, 240, 255, 0.35);
     opacity: 1;
-    animation: neonPulse 5s ease-in-out infinite;
   }
 
-  @keyframes neonPulse {
-    0%   { text-shadow: 0 0 8px rgba(0,240,255,.45); opacity: .95; }
-    50%  { text-shadow: 0 0 14px rgba(212,92,255,.55); opacity: 1; }
-    100% { text-shadow: 0 0 8px rgba(0,240,255,.45); opacity: .95; }
-  }
-
-  /* Quitar glitch excesivo del anterior */
   .tagline-mobile::before,
   .tagline-mobile::after {
     display: none;
   }
 
-  /* video */
+  /* Recuadro con la imagen en móvil */
+  .mobile-portrait-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background:
+      radial-gradient(circle at top left, rgba(0, 240, 255, 0.18), transparent 55%),
+      rgba(2, 6, 18, 0.95);
+    border: 1px solid rgba(0, 240, 255, 0.18);
+  }
+
   .video-wrap {
     max-width: 100%;
   }
 }
-
 
 /* Particles canvas */
 #particlesCanvas {
@@ -545,81 +548,4 @@ button#sendBtn {
 
 .banner.show {
   display: block;
-}
-
-/* --- animaciones del glow / glitch del tagline --- */
-@keyframes glowPulse {
-  0% {
-    text-shadow: 0 0 10px rgba(0, 240, 255, .3);
-    opacity: 0.85;
-  }
-
-  50% {
-    text-shadow: 0 0 22px rgba(212, 92, 255, .75);
-    opacity: 1;
-  }
-
-  100% {
-    text-shadow: 0 0 10px rgba(0, 240, 255, .3);
-    opacity: 0.85;
-  }
-}
-
-@keyframes glitchShift1 {
-  0% {
-    transform: translate3d(-1px, 0, 0);
-    opacity: 0.18;
-  }
-
-  20% {
-    transform: translate3d(-2px, -1px, 0);
-    opacity: 0.35;
-  }
-
-  40% {
-    transform: translate3d(-1px, 1px, 0);
-    opacity: 0.22;
-  }
-
-  60% {
-    transform: translate3d(-3px, 0, 0);
-    opacity: 0.4;
-  }
-
-  80% {
-    transform: translate3d(-1px, -1px, 0);
-    opacity: 0.2;
-  }
-
-  100% {
-    transform: translate3d(-1px, 0, 0);
-    opacity: 0.18;
-  }
-}
-
-@keyframes glitchShift2 {
-  0% {
-    transform: translate3d(1px, 0, 0);
-    opacity: 0.18;
-  }
-
-  25% {
-    transform: translate3d(2px, 1px, 0);
-    opacity: 0.36;
-  }
-
-  50% {
-    transform: translate3d(1px, -1px, 0);
-    opacity: 0.24;
-  }
-
-  75% {
-    transform: translate3d(3px, 0, 0);
-    opacity: 0.4;
-  }
-
-  100% {
-    transform: translate3d(1px, 0, 0);
-    opacity: 0.18;
-  }
 }

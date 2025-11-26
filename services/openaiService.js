@@ -23,8 +23,8 @@ const client = new OpenAI({ apiKey: OPENAI_KEY });
  * - { ok: false, code: "openai_error", status, message }
  */
 export async function runModel(messages, opts = {}) {
-  const max_output_tokens = opts.max_output_tokens ?? 1300;
-  const temperature = typeof opts.temperature === "number" ? opts.temperature : 1.2;
+  const max_output_tokens = opts.max_output_tokens ?? 1000;
+  const temperature = typeof opts.temperature === "number" ? opts.temperature : 8;
 
   // Helper para extraer Retry-After de headers si existe
   function getRetryAfterFromErr(err) {

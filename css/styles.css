@@ -417,14 +417,16 @@ button#sendBtn {
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width:640px) {
+
+  /* Layout general */
   .stage {
-    padding: 16px;
+    padding: 14px;
     position: relative;
     z-index: 2;
   }
 
-  /* HERO como fondo animado a pantalla completa en móvil */
+  /* Fondo futurista muchísimo más limpio y elegante */
   .hero {
     position: fixed;
     inset: 0;
@@ -434,101 +436,84 @@ button#sendBtn {
     border: none;
     box-shadow: none;
     background: transparent;
-    z-index: 1;
     pointer-events: none;
+    z-index: 1;
   }
 
+  /* Nueva animación suave, estilo “drift elegante” */
   .portrait {
     background-image: url('../img/aurorael.PNG');
-    background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
-    filter: contrast(1.05) saturate(1.08) hue-rotate(-4deg);
-    animation: portraitDrift 14s ease-in-out infinite alternate;
+    animation: portraitSoftDrift 18s ease-in-out infinite alternate;
+    filter: brightness(0.92) saturate(1.1);
   }
 
-  @keyframes portraitDrift {
-    0% {
-      transform: translate3d(0, 0, 0) scale(1);
-    }
-
-    50% {
-      transform: translate3d(-6px, -10px, 0) scale(1.05) rotate3d(0, 1, 0, 3deg);
-    }
-
-    100% {
-      transform: translate3d(4px, 6px, 0) scale(1.03) rotate3d(0, 1, 0, -2deg);
-    }
+  @keyframes portraitSoftDrift {
+    0%   { transform: scale(1.05) translate3d(0,0,0); }
+    50%  { transform: scale(1.09) translate3d(-6px,-8px,0); }
+    100% { transform: scale(1.06) translate3d(4px,6px,0); }
   }
 
-  .hero::before,
-  .hero::after {
-    opacity: 0.7;
+  /* halos más suaves */
+  .hero::before, .hero::after {
+    opacity: 0.55;
   }
 
+  /* Ocultar tarjeta izquierda */
   .card-left {
     display: none;
   }
 
+  /* Nuevo panel estilo GLASS: más transparencia, más limpio */
   .panel {
-    padding: 18px;
+    padding: 20px;
     min-height: auto;
-    background: rgba(3, 8, 18, 0.78); /* MÁS TRANSPARENTE */
-    backdrop-filter: blur(8px);       /* mejora la lectura y da efecto futurista */
+    background: rgba(5, 10, 20, 0.65);  /* mucho más limpio */
+    backdrop-filter: blur(16px) brightness(1.06);
+    border: 1px solid rgba(0,255,255,0.06);
+    box-shadow: 0 12px 40px rgba(0,0,0,.55);
+    border-radius: 16px;
     z-index: 2;
   }
 
   .panel-head h2 {
-    font-size: 28px;
+    font-size: 26px;
   }
 
+  /* ------ NUEVO TAGLINE SUPER NÍTIDO -------- */
+  .tagline-mobile {
+    display: block;
+    margin-top: 6px;
+    font-family: "Orbitron", sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: rgba(220,255,255,0.95); /* mucho más claro */
+    text-shadow: 0 0 9px rgba(0,240,255,0.55);
+    white-space: nowrap; /* 🔥 siempre en una línea */
+    opacity: 1;
+    animation: neonPulse 5s ease-in-out infinite;
+  }
+
+  @keyframes neonPulse {
+    0%   { text-shadow: 0 0 8px rgba(0,240,255,.45); opacity: .95; }
+    50%  { text-shadow: 0 0 14px rgba(212,92,255,.55); opacity: 1; }
+    100% { text-shadow: 0 0 8px rgba(0,240,255,.45); opacity: .95; }
+  }
+
+  /* Quitar glitch excesivo del anterior */
+  .tagline-mobile::before,
+  .tagline-mobile::after {
+    display: none;
+  }
+
+  /* video */
   .video-wrap {
     max-width: 100%;
   }
-
-  /* Tagline se activa y se vuelve súper futurista en móvil */
-  .tagline-mobile {
-    display: inline-block;
-    margin-top: 6px;
-    font-family: "Orbitron", sans-serif;
-    font-size: 11px;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
-    -webkit-background-clip: text;
-    color: transparent;
-    position: relative;
-    opacity: 0.95;
-    text-shadow: 0 0 12px rgba(0, 240, 255, 0.45);
-    animation: glowPulse 2.6s ease-in-out infinite;
-  }
-
-  .tagline-mobile::before,
-  .tagline-mobile::after {
-    content: "Advanced philosophical language model.";
-    position: absolute;
-    left: 0;
-    top: 0;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    opacity: 0.25;
-    mix-blend-mode: screen;
-    pointer-events: none;
-  }
-
-  .tagline-mobile::before {
-    transform: translate3d(-1px, 0, 0);
-    text-shadow: -1px 0 rgba(0, 240, 255, 0.7);
-    animation: glitchShift1 1.8s infinite linear;
-  }
-
-  .tagline-mobile::after {
-    transform: translate3d(1px, 0, 0);
-    text-shadow: 1px 0 rgba(212, 92, 255, 0.7);
-    animation: glitchShift2 2.1s infinite linear;
-  }
 }
+
 
 /* Particles canvas */
 #particlesCanvas {

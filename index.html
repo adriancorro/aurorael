@@ -8,7 +8,6 @@
   <link rel="icon" type="image/png" sizes="512x512" href="img/hegel.png" />
   <meta name="description" content="Aurorael — AI futurista. Pregúntale cosas y experimenta la interfaz cyberpunk." />
 
-  <!-- Enlaza el CSS -->
   <link rel="stylesheet" href="css/styles.css">
 </head>
 
@@ -17,16 +16,17 @@
 
   <div class="banner" id="banner" role="status" aria-live="polite"></div>
 
-  <div class="stage" style="z-index:1">
+  <div class="stage">
+    <!-- HERO DESKTOP -->
     <div>
       <div class="hero" role="img" aria-label="Aurorael portrait">
-        <div class="portrait" aria-hidden="true"></div>
+        <div class="portrait"></div>
 
-        <div class="card-left" role="region" aria-label="Aurorael info">
+        <div class="card-left">
           <div class="brand">
-            <div class="logo" aria-hidden="true">
-              <!-- SVG logo -->
-              <svg viewBox="0 0 24 24" width="36" height="36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <div class="logo">
+
+              <svg viewBox="0 0 24 24" width="36" height="36" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <linearGradient id="g2" x1="0" x2="1">
                     <stop offset="0" stop-color="#00f0ff" />
@@ -38,6 +38,7 @@
                 <path d="M6 17L10 7L14 17" stroke="#9fefff" stroke-width="1.6" stroke-linecap="round"
                   stroke-linejoin="round" fill="none" />
               </svg>
+
             </div>
 
             <div>
@@ -47,32 +48,37 @@
           </div>
 
           <p class="hero-desc">
-            Aurorael es una inteligencia artificial teórica crítica que cuestiona el poder, la economía, la cultura y
-            los medios que moldean nuestra forma de pensar.
+            Aurorael es una inteligencia artificial teórica crítica que cuestiona
+            el poder, la economía, la cultura y la forma en que pensamos.
           </p>
         </div>
       </div>
     </div>
 
-    <section class="panel" aria-labelledby="panel-title">
-      <div class="scanline" aria-hidden="true"></div>
+    <!-- PANEL PRINCIPAL -->
+    <section class="panel">
+      <div class="scanline"></div>
 
       <div class="panel-head">
-        <div>
-          <h2 id="panel-title">AURORÆL</h2>
+
+        <div class="left-panel-info">
+          <h2>AURORÆL</h2>
+
+          <!-- ESTA FRASE SE OCULTA EN MOVIL -->
           <div class="desc">Ask and explore — type your question below.</div>
 
-          <!-- Tagline especial para móvil -->
-          <div class="tagline-mobile">Advanced philosophical language model.</div>
+          <div class="tagline-mobile">
+            Advanced philosophical language model.
+          </div>
         </div>
 
-        <div style="display:flex;gap:8px;align-items:center;">
+        <div class="right-panel-info">
           <div class="status-pill">Online</div>
         </div>
       </div>
 
-      <!-- Recuadro con la imagen en móvil -->
-      <div class="mobile-portrait-card" aria-hidden="true">
+      <!-- RECUADRO CON LA IMAGEN EN MÓVIL -->
+      <div class="mobile-portrait-card">
         <div class="mobile-portrait"></div>
         <div class="mobile-portrait-meta">
           <div class="mobile-name">AURORÆL</div>
@@ -80,30 +86,30 @@
         </div>
       </div>
 
-      <div class="composer" role="form" aria-label="Composer">
-        <textarea id="prompt" placeholder="Any topic you’d like to talk about? " aria-label="Pregunta"></textarea>
+      <!-- INPUT + RESPUESTA -->
+      <div class="composer">
+        <textarea id="prompt" placeholder="Any topic you’d like to talk about?"></textarea>
+
         <div class="controls">
-          <button id="sendBtn" aria-label="Consultar">Ask</button>
+          <button id="sendBtn">Ask</button>
         </div>
 
-        <div id="respuesta" role="status" aria-live="polite"></div>
+        <div id="respuesta"></div>
 
-        <div id="videoContainer" aria-live="polite" aria-atomic="true"></div>
+        <div id="videoContainer"></div>
 
         <div class="panel-foot">
-          <div>Created by <a href="https://github.com/adriancorro" target="_blank" rel="noopener">Adrian</a></div>
-          <div style="opacity:0.9">
-            <a href="https://x.com/AURORAEL_AI" target="_blank" rel="noopener"
-              style="color: var(--neon-cyan); text-decoration: none; font-weight: 600;">
-              X
-            </a>
+          <div>Created by <a href="https://github.com/adriancorro" target="_blank">Adrian</a></div>
+
+          <div>
+            <a href="https://x.com/AURORAEL_AI" target="_blank">X</a>
           </div>
         </div>
       </div>
+
     </section>
   </div>
 
-  <!-- JS -->
   <script type="module" src="js/app.js"></script>
 
   <noscript>
@@ -114,6 +120,7 @@
       }
     </style>
   </noscript>
+
 </body>
 
 </html>

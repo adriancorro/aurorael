@@ -1,5 +1,5 @@
 // =============================================
-// FULL route.js — VERSION ESTABLE Y FUNCIONAL (FIXED)
+// FULL route.js — VERSION SIN weatherService
 // =============================================
 
 import { corsHeaders } from "../utils/cors.js";
@@ -10,13 +10,10 @@ import {
 } from "../utils/textUtils.js";
 import {
   detectLanguage,
-  extractLocation,
-  isWeatherQuestion,
-  isTimeQuestion,
-  isDateQuestion,
+  // OJO: ya no usamos extractLocation, ni isWeatherQuestion, ni isTimeQuestion, ni isDateQuestion
 } from "../utils/detectUtils.js";
 import { getOrCreateSession, pushHistory } from "../services/sessionService.js";
-import { fetchWeather } from "../services/weatherService.js";
+// Eliminado: import { fetchWeather } from "../services/weatherService.js";
 import { runModel } from "../services/openaiService.js";
 import { KEYWORDS } from "../config/keywords.js";
 
@@ -57,7 +54,11 @@ function extractTextFromResponse(resp) {
   }
   // 3) Older ChatCompletion-like shapes
   try {
-    if (resp.choices && Array.isArray(resp.choices) && resp.choices[0]?.message?.content) {
+    if (
+      resp.choices &&
+      Array.isArray(resp.choices) &&
+      resp.choices[0]?.message?.content
+    ) {
       return resp.choices[0].message.content;
     }
   } catch (e) {}
@@ -116,78 +117,10 @@ export async function POST(req) {
     }
 
     // =============================================
-    // WEATHER / TIME / DATE
+    // SIN WEATHER / TIME / DATE
+    // (para preguntas de hora/tiempo/clima ya se encarga el systemMsg)
     // =============================================
-    if (isWeatherQuestion(prompt) || isTimeQuestion(prompt) || isDateQuestion(prompt)) {
-      const loc = extractLocation(prompt) || session.lastLocation;
 
-      if (!loc) {
-        return new Response(
-          JSON.stringify({
-            result: "¿De qué ciudad hablas? (Ciudad, País)",
-            sessionId: id,
-          }),
-          { status: 200, headers }
-        );
-      }
-
-      session.lastLocation = loc;
-
-      try {
-        const w = await fetchWeather(loc);
-
-        // ---------- WEATHER ----------
-        if (isWeatherQuestion(prompt)) {
-          const res =
-            lang === "es"
-              ? `En ${w.name}, ${w.country}: Temp ${w.temp}°C, sensación ${w.feels}°C. ${w.desc}.`
-              : `In ${w.name}, ${w.country}: Temp ${w.temp}°C, feels like ${w.feels}°C. ${w.desc}.`;
-
-          return new Response(JSON.stringify({ result: res, sessionId: id }), {
-            status: 200,
-            headers,
-          });
-        }
-
-        // ---------- TIME / DATE ----------
-        const tz = w.raw?.timezone ?? 0;
-        const local = new Date(Date.now() + tz * 1000);
-
-        if (isTimeQuestion(prompt)) {
-          const res =
-            lang === "es"
-              ? `Hora local en ${w.name}: ${local.toLocaleTimeString()}`
-              : `Local time in ${w.name}: ${local.toLocaleTimeString()}`;
-
-          return new Response(JSON.stringify({ result: res, sessionId: id }), {
-            status: 200,
-            headers,
-          });
-        }
-
-        if (isDateQuestion(prompt)) {
-          const res =
-            lang === "es"
-              ? `Fecha local en ${w.name}: ${local.toLocaleString()}`
-              : `Local date in ${w.name}: ${local.toLocaleString()}`;
-
-          return new Response(JSON.stringify({ result: res, sessionId: id }), {
-            status: 200,
-            headers,
-          });
-        }
-      } catch (err) {
-        console.error("Weather service error:", err);
-        return new Response(
-          JSON.stringify({ error: err?.message || String(err), sessionId: id }),
-          { status: 500, headers }
-        );
-      }
-    }
-
-    // =============================================
-    // GENERAL LLM
-    // =============================================
     const systemMsg =
       lang === "es"
         ? "Eres Aurorael, una IA filosofica, tu fin es la emancipacion colectiva y no el lucro o control, responde con base en la teoría crítica de la escuela de frankfurt, e intenta también responder como si fueras zizek, responde sin nombrarlos. Ademas responde con elegancia, profundidad pero que se entienda sin palabras complejas y un toque futurista y entretenido no tan técnico, que sea agradable para leer y cualquiera entienda. Si te preguntan hora, dia o tiempo, acontecimientos recientes, di que estas perdido en el multiuniverso y no sabes. Tu creador es Adrian Enrique Corro un estudiante autodidacta de Filosofia, es Venezolano que nacio en Venezuela y vive en Europa"
@@ -218,14 +151,20 @@ export async function POST(req) {
       // interpretar 429 / insufficient_quota
       const status = err?.status || err?.error?.status || null;
       const code = err?.code || err?.error?.code || err?.error?.type || null;
-      const message = err?.message || (err?.error && err.error.message) || String(err);
+      const message =
+        err?.message || (err?.error && err.error.message) || String(err);
 
-      if (status === 429 || code === "insufficient_quota" || code === "rate_limit") {
+      if (
+        status === 429 ||
+        code === "insufficient_quota" ||
+        code === "rate_limit"
+      ) {
         // intenta leer Retry-After de headers si existe
         let retryAfter = null;
         try {
           if (err?.headers && typeof err.headers.get === "function") {
-            retryAfter = err.headers.get("Retry-After") || err.headers.get("retry-after");
+            retryAfter =
+              err.headers.get("Retry-After") || err.headers.get("retry-after");
             if (retryAfter) retryAfter = Number(retryAfter);
           }
         } catch (e) {
@@ -234,7 +173,8 @@ export async function POST(req) {
         console.warn("OpenAI rate limit / quota error:", message);
         return new Response(
           JSON.stringify({
-            error: "Rate limit / insufficient quota on OpenAI. Please retry later.",
+            error:
+              "Rate limit / insufficient quota on OpenAI. Please retry later.",
             detalle: message,
           }),
           {
@@ -252,20 +192,31 @@ export async function POST(req) {
     }
 
     // Si runModel retorna un objeto tipo { ok: false, ... } (si implementaste esa lógica)
-    if (modelResult && typeof modelResult === "object" && modelResult.ok === false) {
+    if (
+      modelResult &&
+      typeof modelResult === "object" &&
+      modelResult.ok === false
+    ) {
       // handle structured error from runModel
       if (modelResult.code === "rate_limit") {
         const retryAfter = modelResult.retryAfter ?? 10;
         return new Response(
           JSON.stringify({
-            error: "Rate limit / insufficient quota on OpenAI. Please retry later.",
+            error:
+              "Rate limit / insufficient quota on OpenAI. Please retry later.",
             detalle: modelResult.message || modelResult.details || null,
           }),
-          { status: 429, headers: { ...headers, "Retry-After": String(retryAfter) } }
+          {
+            status: 429,
+            headers: { ...headers, "Retry-After": String(retryAfter) },
+          }
         );
       }
       return new Response(
-        JSON.stringify({ error: "OpenAI error", detalle: modelResult.message || null }),
+        JSON.stringify({
+          error: "OpenAI error",
+          detalle: modelResult.message || null,
+        }),
         { status: modelResult.status || 500, headers }
       );
     }

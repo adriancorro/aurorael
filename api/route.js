@@ -108,7 +108,7 @@ export async function POST(req) {
     const askAuthor = KEYWORDS.some((k) => clean.includes(normalizeText(k)));
     if (askAuthor) {
       const txt =
-        "AURORAEL fue creada por **Adrian Corro** en un proyecto filosófico-crítico. Si deseas ver su origen metafísico, te muestro un video.";
+        "Aurorael fue creada por **Adrian** en un modelo de lenguaje avanzado filosófico-crítico. Ya que tienes tanto interés te muestro un video donde de muestra como se desarrolló Aurorael. El gran inicio.";
 
       return new Response(
         JSON.stringify({ result: txt, videoId: "jOSO3AAIUzM", sessionId: id }),

@@ -128,8 +128,14 @@ export function renderVideo(videoId) {
   videoContainer.innerHTML = "";
   if (!videoId) return;
 
-  const paramsMuted = `autoplay=1&mute=1&rel=0&modestbranding=1&playsinline=1&vq=hd1080`;
-  const paramsUnmuted = `autoplay=1&mute=0&rel=0&modestbranding=1&playsinline=1&vq=hd1080`;
+  // Intento fuerte de forzar HD
+  const QUALITY = "hd1080";
+  // YouTube no siempre garantiza esta calidad (depende de conexión / dispositivo),
+  // pero vq=hd1080 es la pista más fuerte que podemos darle desde un embed.
+  const baseParams = `rel=0&modestbranding=1&playsinline=1&vq=${QUALITY}`;
+
+  const paramsMuted = `autoplay=1&mute=1&${baseParams}`;
+  const paramsUnmuted = `autoplay=1&mute=0&${baseParams}`;
 
   const wrap = document.createElement("div");
   wrap.className = "video-wrap";
@@ -163,7 +169,7 @@ export function renderVideo(videoId) {
   bigBtn.textContent = "Reproducir con sonido";
   bigBtn.className = "big-unmute-btn";
   bigBtn.addEventListener("click", () => {
-    // recarga con sonido activado
+    // recarga con sonido activado, manteniendo la calidad pedida
     iframe.src = `https://www.youtube.com/embed/${videoId}?${paramsUnmuted}`;
     overlay.remove();
   });

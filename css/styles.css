@@ -575,10 +575,16 @@ button#sendBtn {
     max-width: 100%;
   }
 
-  /* Footer en columna en móvil */
+  /* Footer más discreto y separado en móvil */
   .panel-foot {
     flex-direction: column;
     align-items: flex-start;
+    margin-top: 26px;              /* más espacio respecto a la respuesta */
+    padding-top: 10px;             /* espacio interior arriba */
+    border-top: 1px solid rgba(0, 240, 255, 0.16); /* línea sutil de separación */
+    font-size: 11px;               /* un poco más pequeño */
+    color: rgba(185, 235, 245, 0.78);
+    gap: 6px;
   }
 
   .panel-foot-left {
@@ -591,6 +597,17 @@ button#sendBtn {
 
   .panel-links {
     justify-content: flex-start;
+    font-size: 11px;
+  }
+
+  .panel-foot a {
+    font-weight: 500;
+    opacity: 0.9;                  /* links algo menos intensos */
+  }
+
+  .legal-hint {
+    font-size: 10px;
+    opacity: 0.8;
   }
 }
 

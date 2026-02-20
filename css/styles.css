@@ -174,7 +174,7 @@ body {
 
 .numerologia {
   font-family: "Roboto flex", sans-serif;
-  font-size: 6px;
+  font-size: 8px;
   letter-spacing: 2px;
   background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
   -webkit-background-clip: text;

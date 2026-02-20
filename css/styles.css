@@ -173,8 +173,8 @@ body {
 }
 
 .numerologia {
-  font-family: "Orbitron", sans-serif;
-  font-size: 8;
+  font-family: "Roboto flex", sans-serif;
+  font-size: 6px;
   letter-spacing: 2px;
   background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
   -webkit-background-clip: text;

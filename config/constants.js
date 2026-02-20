@@ -8,6 +8,8 @@ export const OPENWEATHER_KEY = process.env.OPENWEATHER_API_KEY || "";
 export const OPENAI_KEY = process.env.OPENAI_API_KEY;
 export const ALLOWED_ORIGINS = [
   "https://aurorael.vercel.app",
+  "https://aurorael.com",
+  "https://www.aurorael.com",
   "http://localhost:3000",
   "http://127.0.0.1:3000",
 ];

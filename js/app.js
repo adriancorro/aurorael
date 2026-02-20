@@ -414,7 +414,7 @@ if (btn && textarea) {
     }
   });
   if (!localStorage.getItem("seenWelcome")) {
-    textarea.value = "¿Quién te creó?";
+    textarea.value = "Hola";
     localStorage.setItem("seenWelcome", "1");
   }
 }

@@ -15,3 +15,9 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+
+/*
+Write this in the html for analytic vercel
+
+<script defer src="/aurorael/dev/layout.js"></script>
+<script defer src="/_vercel/insights/script.js"></script>  */ 

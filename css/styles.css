@@ -461,7 +461,7 @@ button#sendBtn {
   align-items: center;
   flex-wrap: wrap;
   justify-content: flex-end;
-  font-size: 12px;
+  font-size: 8px;
 }
 
 .panel-links span {

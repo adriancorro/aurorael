@@ -172,6 +172,15 @@ body {
   color: transparent;
 }
 
+.numerologia {
+  font-family: "Orbitron", sans-serif;
+  font-size: 16;
+  letter-spacing: 2px;
+  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
 .subtitle {
   font-size: 12px;
   color: rgba(190, 255, 255, .9);

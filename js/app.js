@@ -414,7 +414,8 @@ if (btn && textarea) {
     }
   });
   if (!localStorage.getItem("seenWelcome")) {
-    textarea.value = "Hola";
+    textarea.value =
+      " ";
     localStorage.setItem("seenWelcome", "1");
   }
 }

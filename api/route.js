@@ -92,6 +92,7 @@ export async function POST(req) {
 Hello. I am Aurorael, a philosophical-critical AI.
 If you wish, I can share a reflective video with you.
 What are you thinking about?
+¿De qué te gustaria hablar?
 `;
 
       return new Response(

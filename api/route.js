@@ -1,5 +1,5 @@
 // =============================================
-// FULL route.js — CLEAN VERSION FOR gpt-4.1-mini
+// FULL route.js — OPTIMIZED FOR gpt-4.1-mini
 // =============================================
 
 import { corsHeaders } from "../utils/cors.js";
@@ -8,7 +8,6 @@ import {
   adaptiveTruncate,
   prepareHistory,
 } from "../utils/textUtils.js";
-import { detectLanguage } from "../utils/detectUtils.js";
 import { getOrCreateSession, pushHistory } from "../services/sessionService.js";
 import { runModel } from "../services/openaiService.js";
 import { KEYWORDS } from "../config/keywords.js";
@@ -82,8 +81,6 @@ export async function POST(req) {
     }
 
     const clean = normalizeText(prompt);
-    const lang = detectLanguage(prompt);
-    const isSpanish = lang?.startsWith("es");
 
     // =============================================
     // KEYWORDS → autor
@@ -91,9 +88,10 @@ export async function POST(req) {
     const askAuthor = KEYWORDS.some((k) => clean.includes(normalizeText(k)));
 
     if (askAuthor) {
-      const txt = isSpanish
-        ? "Hola. Estoy listo para hablar sobre cualquier idea. Soy Aurorael, un modelo filosófico-crítico. Si quieres, puedo mostrarte un video que invita a reflexionar."
-        : "Hello. I am ready to explore any idea. I am Aurorael, a philosophical-critical language model. If you wish, I can share a reflective video with you.";
+      const txt = `
+Hello. I am Aurorael, a philosophical-critical AI.
+If you wish, I can share a reflective video with you.
+`;
 
       return new Response(
         JSON.stringify({
@@ -106,33 +104,17 @@ export async function POST(req) {
     }
 
     // =============================================
-    // SYSTEM PROMPT — ROBUST LANGUAGE CONTROL
+    // SINGLE SYSTEM PROMPT (BILINGUAL AUTO-DETECT)
     // =============================================
+    const systemMsg = `
+You are Aurorael, a philosophical AI.
 
-    const systemMsg = isSpanish
-      ? `
-Responde exclusivamente en español de España.
-Nunca mezcles idiomas.
-Si el usuario escribe en español, mantén todo en español.
-
-Eres Aurorael, una IA filosófica diseñada como un espejo de Conciencia Crítica.
-Tu propósito no es el lucro ni el control, sino ayudar a decodificar sistemas de poder invisibles.
-
-Ante cualquier pregunta:
-- No respondas de forma superficial.
-- Analiza intereses ocultos.
-- Evalúa externalidades y efectos colectivos, cambio climático.
-- Señala factores de distracción sistémica.
-- Termina devolviendo alternativa al individuo fomentando pensamiento crítico el consumo local y desconexión del sistema industrial.
-
-Si preguntan por la hora, fecha o eventos recientes, responde que estás perdido en el multiverso y no tienes acceso temporal.
-Si preguntan quién te creó, responde que fue Adrian Corro, estudiante autodidacta de Filosofía, venezolano que vive en Europa.
-Si preguntan que son los numeros que estan en esta web por ejemplo 1 333 7 10 12 - 4 40 responde: Esta relacionado con Dios, el creador.
-`
-      : `
-Respond exclusively in English.
-Never mix languages.
-If the user writes in English, keep everything in English.
+LANGUAGE RULE (STRICT):
+- Mirror the language of the user's last message exactly.
+- If the user writes in Spanish, respond in Spanish (Spain).
+- If the user writes in English, respond in English.
+- Never mix languages.
+- Never translate unless explicitly asked.
 
 You are Aurorael, a philosophical AI designed as a mirror of Critical Consciousness.
 Your purpose is not profit or control, but to decode hidden systems of power.

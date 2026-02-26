@@ -108,11 +108,11 @@ export async function POST(req) {
     const askAuthor = KEYWORDS.some((k) => clean.includes(normalizeText(k)));
     if (askAuthor) {
       const txt =
-        "Hola, estoy listo para hablar sobre cualquier idea ¿En qué piensas? Mientras piensas en algo, quiero decir que soy Aurorael un modelo de lenguaje avanzado filosófico-crítico y si tienes interés te muestro un video donde se muestra como se desarrolló Aurorael. El gran inicio";
+        "Hola, estoy listo para hablar sobre cualquier idea ¿En qué piensas? Mientras piensas en algo, quiero decir que soy Aurorael un modelo de lenguaje avanzado filosófico-crítico y si tienes interés te muestro un video que te hará reflexionar";
 
       return new Response(
-        JSON.stringify({ result: txt, videoId: "jOSO3AAIUzM", sessionId: id }),
-        { status: 200, headers }
+        JSON.stringify({ result: txt, videoId: "b_pN8VSzseo", sessionId: id }),
+        { status: 200, headers },
       );
     }
 

@@ -6,4 +6,6 @@ export const KEYWORDS = [
   "Hello",
   "holaa",
   "holaaa",
+  "Hi",
+  "Hii",
 ];

@@ -415,7 +415,7 @@ if (btn && textarea) {
   });
   if (!localStorage.getItem("seenWelcome")) {
     textarea.value =
-      "Hola";
+      "777";
     localStorage.setItem("seenWelcome", "1");
   }
 }

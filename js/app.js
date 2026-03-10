@@ -12,7 +12,7 @@ const API_URL = `${window.location.origin}/api/route`; // ajusta si tu ruta es d
   function resize() {
     canvas.width = innerWidth;
     canvas.height = innerHeight;
-  }
+   } 
   resize();
   window.addEventListener("resize", resize);
 
@@ -162,8 +162,7 @@ export function renderVideo(videoId) {
 
   const instr = document.createElement("div");
   instr.className = "big-text";
-  instr.textContent =
-    "Pulsa para reproducir con sonido (necesario por políticas del navegador)";
+  instr.textContent = "Click to play with sound (required by browser policies)";
 
   const bigBtn = document.createElement("button");
   bigBtn.textContent = "Reproducir con sonido";
@@ -311,7 +310,7 @@ if (btn && textarea) {
   btn.addEventListener("click", async () => {
     const raw = textarea.value.trim();
     if (!raw) {
-      resp.textContent = "Por favor, escríbele a Aurorael.";
+      resp.textContent = "I'm here to talk to you";
       return;
     }
     try {
@@ -324,7 +323,7 @@ if (btn && textarea) {
     const locationToSend = expectingLocation ? raw : "";
     resp.textContent = expectingLocation
       ? "🗺 Enviando ubicación..."
-      : "🌀 Consultando a Aurorael...";
+      : "🌀...";
     textarea.disabled = true;
     btn.disabled = true;
     showBanner("", 1);
@@ -339,7 +338,7 @@ if (btn && textarea) {
             ? data.detail.message || data.detail.detalle
             : "";
         const msg = retryAfter
-          ? `Servidor saturado (429). Reintenta en ${retryAfter}s.`
+          ? `Servidor saturado (429). try in ${retryAfter}s.`
           : `Servidor saturado (429).`;
         showBanner(
           msg + (detailMsg ? " " + detailMsg : ""),
@@ -355,7 +354,7 @@ if (btn && textarea) {
 
       if (data && data.error) {
         resp.textContent =
-          data.message || data.error || "Error al procesar la solicitud.";
+          data.message || data.error || "Error :( sorry";
         textarea.disabled = false;
         btn.disabled = false;
         expectingLocation = false;
@@ -373,7 +372,7 @@ if (btn && textarea) {
           renderVideo(null);
         } else {
           expectingLocation = false;
-          textarea.placeholder = "Escribe tu pregunta...";
+          textarea.placeholder = "I'm here to talk to you.";
           textarea.value = "";
           typeText(resp, text, 6);
           const keywordsAvailable =

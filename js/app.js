@@ -304,7 +304,7 @@ const btn = document.getElementById("sendBtn");
 const resp = document.getElementById("respuesta");
 const textarea = document.getElementById("prompt");
 let expectingLocation = false;
-const DEFAULT_VIDEO_ID = "jOSO3AAIUzM";
+const DEFAULT_VIDEO_ID = "YDRId6QmNTA";
 
 if (btn && textarea) {
   btn.addEventListener("click", async () => {

@@ -4,6 +4,7 @@ export function corsHeaders(origin) {
   const allowed = ALLOWED_ORIGINS.includes(origin)
     ? origin
     : ALLOWED_ORIGINS[0];
+
   return {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": allowed,

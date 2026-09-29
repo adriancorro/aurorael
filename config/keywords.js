@@ -1,4 +1,1 @@
-export const KEYWORDS = [
-  // Español
-  "777",
-];
+export const KEYWORDS = ["777"];

@@ -8,7 +8,7 @@ export function normalizeText(t = "") {
   return t
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[̀-\u036f]/g, "");
+    .replace(/[\u0300-\u036f]/g, "");
 }
 
 export function adaptiveTruncate(text, maxChars) {

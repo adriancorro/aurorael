@@ -1,0 +1,263 @@
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&family=Exo+2:wght@300;400;600;700&display=swap");
+
+:root {
+  --bg-dark: #05030b;
+  --neon-cyan: #00f0ff;
+  --neon-magenta: #d45cff;
+  --accent: #7ee7ff;
+  --text: #dffaff;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100%; }
+
+body {
+  overflow-x: hidden;
+  background:
+    radial-gradient(1000px 500px at 12% 18%, rgba(6,8,20,.85), transparent 55%),
+    radial-gradient(800px 420px at 90% 82%, rgba(50,0,80,.6), transparent 55%),
+    var(--bg-dark);
+  font-family: "Exo 2", system-ui, sans-serif;
+  color: var(--text);
+}
+
+#particlesCanvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .8;
+}
+
+.banner {
+  position: fixed;
+  left: 50%;
+  top: 20px;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: none;
+  max-width: min(720px, calc(100vw - 32px));
+  padding: 10px 16px;
+  border: 1px solid rgba(0,240,255,.18);
+  border-radius: 10px;
+  background: rgba(0,0,0,.85);
+  color: #bfefff;
+}
+.banner.show { display: block; }
+
+.stage {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 420px minmax(0, 1fr);
+  gap: 36px;
+  padding: 56px 48px;
+}
+
+.hero {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  min-height: 680px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(6,6,12,.6), rgba(0,0,0,.55));
+  box-shadow: 0 30px 90px rgba(0,0,0,.6);
+}
+
+.portrait {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, transparent 40%, rgba(0,0,0,.62)),
+    url("https://raw.githubusercontent.com/adriancorro/aurorael/main/img/aurorael.PNG")
+      center/cover no-repeat;
+}
+
+.card-left {
+  position: absolute;
+  z-index: 2;
+  left: 16px;
+  right: 16px;
+  top: 18px;
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(3,6,16,.7);
+  backdrop-filter: blur(6px);
+}
+
+.brand { display: flex; gap: 12px; align-items: center; }
+.logo { width: 56px; height: 56px; display: grid; place-items: center; }
+
+.title,
+.panel h2 {
+  font-family: "Orbitron", sans-serif;
+  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.title { font-size: 22px; letter-spacing: 6px; }
+.subtitle, .hero-desc, .desc { color: #bfefff; }
+.subtitle { font-size: 12px; }
+.hero-desc { margin-top: 10px; font-size: 13px; }
+.numerologia { font-size: 8px; letter-spacing: 2px; color: var(--accent); }
+
+.panel {
+  position: relative;
+  min-height: 620px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 34px;
+  border: 1px solid rgba(0,255,255,.08);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(6,8,20,.72), rgba(2,4,10,.62));
+  box-shadow: 0 40px 120px rgba(0,0,0,.6);
+  backdrop-filter: blur(7px);
+}
+
+.panel-head { display: flex; justify-content: space-between; align-items: center; }
+.panel h2 { font-size: 36px; letter-spacing: 6px; }
+.desc { font-size: 13px; opacity: .9; }
+
+.status-pill {
+  padding: 6px 10px;
+  border: 1px solid rgba(0,255,255,.08);
+  border-radius: 8px;
+  background: rgba(255,255,255,.02);
+  color: #aef6ff;
+  font-size: 12px;
+}
+
+.tagline-mobile,
+.mobile-portrait-card { display: none; }
+
+.composer { display: flex; flex-direction: column; gap: 12px; }
+
+#prompt {
+  width: 100%;
+  min-height: 170px;
+  padding: 16px;
+  resize: vertical;
+  border: 1px solid rgba(0,255,255,.08);
+  border-radius: 12px;
+  outline: none;
+  background: rgba(0,0,0,.25);
+  color: #ddefef;
+  font: inherit;
+}
+
+#prompt:focus { box-shadow: 0 12px 40px rgba(0,240,255,.08); }
+.controls { display: flex; justify-content: flex-end; }
+
+#sendBtn {
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 22px;
+  cursor: pointer;
+  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+  color: #04121a;
+  font-weight: 700;
+}
+#sendBtn:disabled { opacity: .55; cursor: wait; }
+
+#respuesta {
+  min-height: 140px;
+  overflow: auto;
+  padding: 16px;
+  border: 1px solid rgba(0,255,255,.05);
+  border-radius: 12px;
+  background: rgba(0,10,20,.45);
+  color: #d8ffff;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+#videoContainer iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 12px;
+}
+
+.panel-foot {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  color: rgba(200,255,255,.75);
+  font-size: 13px;
+}
+
+.panel-foot-left { display: flex; flex-direction: column; gap: 4px; max-width: 60%; }
+.panel-links { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; font-size: 8px; }
+.panel-foot a, .legal-page a { color: var(--neon-cyan); text-decoration: none; }
+
+.legal-page {
+  max-width: 800px;
+  margin: 4rem auto;
+  padding: 2rem;
+  border: 1px solid rgba(0,240,255,.25);
+  border-radius: 16px;
+  background: rgba(0,10,20,.88);
+  box-shadow: 0 30px 90px rgba(0,0,0,.6);
+  line-height: 1.6;
+}
+.legal-page h1 { margin-bottom: 1rem; color: var(--accent); font-family: "Orbitron", sans-serif; font-size: 1.8rem; }
+.legal-page h2 { margin-top: 1.8rem; margin-bottom: .4rem; color: #e2fbff; font-size: 1.1rem; }
+.legal-page p, .legal-page li { color: #d3f7ff; }
+.legal-page ul { margin-left: 1.4rem; }
+.legal-back { margin-top: 2rem; }
+
+@media (max-width: 1100px) {
+  .stage { grid-template-columns: 1fr; padding: 28px; }
+  .hero { min-height: 420px; max-width: 720px; }
+}
+
+@media (max-width: 640px) {
+  .stage { padding: 14px; }
+  .hero { display: none; }
+  .panel { min-height: auto; padding: 20px; background: rgba(5,10,20,.9); }
+  .panel-head { align-items: flex-start; gap: 8px; }
+  .panel h2 { font-size: 26px; }
+  .desc { display: none; }
+  .tagline-mobile {
+    display: block;
+    margin-top: 6px;
+    font-family: "Orbitron", sans-serif;
+    font-size: 9px;
+    letter-spacing: .22em;
+    color: var(--accent);
+  }
+  .mobile-portrait-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+    padding: 10px 12px;
+    border: 1px solid rgba(0,240,255,.18);
+    border-radius: 14px;
+    background: rgba(2,6,18,.95);
+  }
+  .mobile-portrait {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background:
+      url("https://raw.githubusercontent.com/adriancorro/aurorael/main/img/aurorael.PNG")
+      center/cover no-repeat;
+  }
+  .mobile-name { font-family: "Orbitron", sans-serif; font-size: 13px; letter-spacing: .16em; }
+  .mobile-role { font-size: 11px; color: rgba(192,240,255,.9); }
+  .panel-foot { flex-direction: column; align-items: flex-start; margin-top: 26px; padding-top: 10px; border-top: 1px solid rgba(0,240,255,.16); font-size: 11px; }
+  .panel-foot-left { max-width: 100%; }
+  .panel-links { justify-content: flex-start; font-size: 7px; }
+}
